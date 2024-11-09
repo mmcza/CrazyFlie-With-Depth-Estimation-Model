@@ -25,7 +25,18 @@ RUN apt-get update && \
     python3-pip \
     python3-colcon-common-extensions \
     wget \
+    libboost-program-options-dev \
+    libusb-1.0-0-dev \
     && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install cflib transform3D 
+
+# Install ROS 2 dependencies
+RUN apt-get update && \
+    apt-get install -y \
+    ros-humble-motion-capture-tracking \
+    ros-humble-tf-transformations \
+    ros-humble-teleop-twist-keyboard
 
 # Disable interactive dialogs
 ENV DEBIAN_FRONTEND=noninteractive
@@ -60,7 +71,7 @@ ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 SHELL ["/bin/bash", "-c"]
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 
-# Install ROS-Gazebo bridge
+# Install Gazebo
 RUN apt-get update && \
     apt-get install -y curl \
     lsb-release \
@@ -86,10 +97,44 @@ RUN line_number=$(grep -n "sys.path.append('../../../../../../python/crazyflie-l
         echo "Text not found in the file."; \
     fi
 
+# Crazyradio 2.0 settings
+# Add plugdev group and add root to it
+RUN getent group plugdev || groupadd plugdev && usermod -a -G plugdev root
+
+# Create udev rules for Crazyflie and Crazyradio
+RUN mkdir -p /etc/udev/rules.d && \
+    echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="1915", ATTRS{idProduct}=="7777", MODE="0664", GROUP="plugdev"' > /etc/udev/rules.d/99-bitcraze.rules && \
+    echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="1915", ATTRS{idProduct}=="0101", MODE="0664", GROUP="plugdev"' >> /etc/udev/rules.d/99-bitcraze.rules && \
+    echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5740", MODE="0664", GROUP="plugdev"' >> /etc/udev/rules.d/99-bitcraze.rules
+
 # Build Crazyflie controller
 WORKDIR /root/crazyflie-simulation/simulator_files/webots/controllers/crazyflie_controller_c
 RUN make
 
-# Set environment for Crazyflie simulation
+# # Set environment for Crazyflie simulation
+# WORKDIR /root
+# RUN export GZ_SIM_RESOURCE_PATH="/root/crazyflie-simulation/simulator_files/gazebo/"
+
+# Create workspaces for both simulation and ROS
+RUN mkdir -p /root/crazyflie_mapping_demo/simulation_ws && \
+    mkdir -p /root/crazyflie_mapping_demo/ros2_ws/src
+
+# Clone the simulation repository
+WORKDIR /root/crazyflie_mapping_demo/simulation_ws
+RUN git clone https://github.com/bitcraze/crazyflie-simulation.git
+
+# Clone the ROS2 projects
+WORKDIR /root/crazyflie_mapping_demo/ros2_ws/src
+RUN git clone https://github.com/knmcguire/crazyflie_ros2_multiranger.git && \
+    git clone https://github.com/knmcguire/ros_gz_crazyflie && \
+    git clone --recursive https://github.com/IMRCLab/crazyswarm2.git
+
+# Build the ROS2 workspace
+WORKDIR /root/crazyflie_mapping_demo/ros2_ws
+RUN source /opt/ros/humble/setup.bash && \
+    colcon build --cmake-args -DBUILD_TESTING=ON
 WORKDIR /root
-RUN export GZ_SIM_RESOURCE_PATH="/root/crazyflie-simulation/simulator_files/gazebo/"
+
+# Source the ROS2 workspace
+RUN echo "source /root/crazyflie_mapping_demo/ros2_ws/install/setup.bash" >> ~/.bashrc
+RUN export GZ_SIM_RESOURCE_PATH="/home/$USER/crazyflie_mapping_demo/simulation_ws/crazyflie-simulation/simulator_files/gazebo/"
