@@ -31,13 +31,6 @@ RUN apt-get update && \
 
 RUN pip3 install cflib transform3D 
 
-# Install ROS 2 dependencies
-RUN apt-get update && \
-    apt-get install -y \
-    ros-humble-motion-capture-tracking \
-    ros-humble-tf-transformations \
-    ros-humble-teleop-twist-keyboard
-
 # Disable interactive dialogs
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -81,6 +74,14 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y gz-harmonic && \
     rm -rf /var/lib/apt/lists/*
+
+# Install ROS 2 dependencies
+RUN apt-get update && \
+    apt-get install -y \
+    ros-humble-motion-capture-tracking \
+    ros-humble-tf-transformations \
+    ros-humble-teleop-twist-keyboard \
+    ros-humble-ros-gzharmonic
 
 # Clone Crazyflie simulator repository
 WORKDIR /root
@@ -137,4 +138,4 @@ WORKDIR /root
 
 # Source the ROS2 workspace
 RUN echo "source /root/crazyflie_mapping_demo/ros2_ws/install/setup.bash" >> ~/.bashrc
-RUN export GZ_SIM_RESOURCE_PATH="/home/$USER/crazyflie_mapping_demo/simulation_ws/crazyflie-simulation/simulator_files/gazebo/"
+ENV GZ_SIM_RESOURCE_PATH="/root/crazyflie_mapping_demo/simulation_ws/crazyflie-simulation/simulator_files/gazebo/"
