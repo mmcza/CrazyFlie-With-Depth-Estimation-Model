@@ -90,6 +90,9 @@ RUN git clone https://github.com/bitcraze/crazyflie-lib-python.git && \
     cd crazyflie-lib-python && \
     pip3 install -e .
 
+# Download the bresenham package
+RUN pip install bresenham
+
 # Use a shell script to find the line number and replace the line
 RUN line_number=$(grep -n "sys.path.append('../../../../../../python/crazyflie-lib-python/examples/multiranger/wall_following')" /root/crazyflie-simulation/simulator_files/webots/controllers/crazyflie_controller_py_wallfollowing/crazyflie_controller_py_wallfollowing.py | cut -d: -f1) && \
     if [ -n "$line_number" ]; then \
