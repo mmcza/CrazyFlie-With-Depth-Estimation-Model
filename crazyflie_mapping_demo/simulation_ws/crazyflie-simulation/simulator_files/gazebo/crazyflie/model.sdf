@@ -68,10 +68,33 @@ Copyright (c) 2024 Bitcraze
         <always_on>1</always_on>
         <visualize>true</visualize>
       </sensor>
-      <sensor name="ai_deck" type="depth">
+      <sensor name="ai_deck_camera" type="camera">
+        <pose relative_to='crazyflie/base_link'>0 0 0.1 0 0 0</pose>
+          <update_rate>20</update_rate>
+          <camera>
+            <name>camera</name>
+            <horizontal_fov>1.57</horizontal_fov>
+            <image>
+              <width>320</width>
+              <height>320</height>
+              <format>L8</format>
+            </image>
+            <clip>
+              <near>0.05</near>
+              <far>10.0</far>
+            </clip>
+          </camera>
+        <always_on>1</always_on>
+        <visualize>false</visualize>
+        <imageTopicName>image_raw</imageTopicName>
+        <topic>camera/image_raw</topic>
+        <frame_name>camera_link</frame_name>
+      </sensor>
+      <sensor name="ai_deck_depth" type="depth">
         <pose relative_to='crazyflie/base_link'>0 0 0.1 0 0 0</pose>
         <update_rate>20</update_rate>
         <camera>
+          <name>depth_camera</name>
           <horizontal_fov>1.57</horizontal_fov>
           <image>
             <width>320</width>
@@ -85,7 +108,9 @@ Copyright (c) 2024 Bitcraze
         </camera>
         <always_on>1</always_on>
         <visualize>false</visualize>
-        <topic>camera/depth_image</topic>
+        <imageTopicName>image_raw</imageTopicName>
+        <topic>depth_camera/depth_image</topic>
+        <frame_name>camera_link</frame_name>
       </sensor>
     </link>
     <link name="crazyflie/m1_prop">

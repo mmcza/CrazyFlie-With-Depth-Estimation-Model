@@ -36,9 +36,30 @@
   gz_type_name: "ignition.msgs.Image"
   direction: GZ_TO_ROS
 
-# Depth Image from Camera
-- ros_topic_name: "/crazyflie/depth_camera"
-  gz_topic_name: "/camera/depth_image"
+# Camera Info
+- ros_topic_name: "/crazyflie/camera/camera_info"
+  gz_topic_name: "/camera/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+# Depth Image from Depth Camera
+- ros_topic_name: "/crazyflie/depth_camera/depth_image"
+  gz_topic_name: "/depth_camera/depth_image"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "ignition.msgs.Image"
+  direction: GZ_TO_ROS
+
+# Point Cloud from Depth Camera
+- ros_topic_name: "/crazyflie/depth_camera/point_cloud"
+  gz_topic_name: "/depth_camera/depth_image/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+
+# Depth Camera Info
+- ros_topic_name: "/crazyflie/depth_camera/camera_info"
+  gz_topic_name: "/depth_camera/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
