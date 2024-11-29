@@ -47,9 +47,10 @@ def generate_launch_description():
         launch_arguments={'gz_args': PathJoinSubstitution([
             pkg_project_gazebo,
             'worlds',
-            'crazyflie_world.sdf -r'
+            'world_cafe_1.sdf -r'
         ])}.items(),
     )
+# crazyflie_world.sdf -r
 
     bridge = Node(
         package='ros_gz_bridge',

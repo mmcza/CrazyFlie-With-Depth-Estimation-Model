@@ -1,4 +1,4 @@
-# Base image with NVIDIA CUDA
+# Base image with ROS2 Humble
 ARG BASE_IMAGE=osrf/ros:humble-desktop
 FROM ${BASE_IMAGE} AS downloader
 
@@ -88,7 +88,7 @@ WORKDIR /root
 RUN git clone https://github.com/bitcraze/crazyflie-simulation.git
 RUN git clone https://github.com/bitcraze/crazyflie-lib-python.git && \
     cd crazyflie-lib-python && \
-    pip3 install -e .
+    pip3 install .
 
 # Download the bresenham package
 RUN pip install bresenham
