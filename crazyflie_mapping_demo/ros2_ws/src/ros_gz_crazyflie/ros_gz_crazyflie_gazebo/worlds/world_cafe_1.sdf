@@ -9,6 +9,8 @@
     <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
     <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
     <plugin name='gz::sim::systems::Contact' filename='gz-sim-contact-system'/>
+    <plugin name='gz::sim::systems::Sensors' filename='gz-sim-sensors-system'/>
+    
     <gravity>0 0 -9.8000000000000007</gravity>
     <magnetic_field>5.5644999999999998e-06 2.2875799999999999e-05 -4.2388400000000002e-05</magnetic_field>
     <atmosphere type='adiabatic'/>
@@ -66,6 +68,11 @@
       <pose>0 0 0 0 0 0</pose>
       <self_collide>false</self_collide>
     </model>
+    <include>
+      <uri>model://crazyflie</uri>
+      <name>crazyflie</name>
+      <pose>0 0 0 0 0 0</pose>
+    </include>
     <model name='cafe'>
       <static>true</static>
       <link name='link'>
@@ -293,9 +300,9 @@
             <specular>1 1 1 1</specular>
             <pbr>
               <metal>
-                <albedo_map>materials/textures/DiningChair_Albedo.jpg</albedo_map>
-                <normal_map>materials/textures/DiningChair_Normal.jpg</normal_map>
-                <roughness_map>materials/textures/DiningChair_Roughness.jpg</roughness_map>
+                <albedo_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Albedo.jpg</albedo_map>
+                <normal_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Normal.jpg</normal_map>
+                <roughness_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Roughness.jpg</roughness_map>
               </metal>
             </pbr>
           </material>
@@ -422,9 +429,9 @@
             <specular>1 1 1 1</specular>
             <pbr>
               <metal>
-                <albedo_map>materials/textures/DiningChair_Albedo.jpg</albedo_map>
-                <normal_map>materials/textures/DiningChair_Normal.jpg</normal_map>
-                <roughness_map>materials/textures/DiningChair_Roughness.jpg</roughness_map>
+                <albedo_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Albedo.jpg</albedo_map>
+                <normal_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Normal.jpg</normal_map>
+                <roughness_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Roughness.jpg</roughness_map>
               </metal>
             </pbr>
           </material>
@@ -537,41 +544,6 @@
       <pose>2.9655699729919434 -2.3948099613189697 0 0 0 3.130669580749835</pose>
       <self_collide>false</self_collide>
     </model>
-    <model name='Dog'>
-      <link name='link_0'>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/dog/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <collision name='collision_0'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/dog/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </collision>
-        <pose>0 0 0 0 0 0</pose>
-        <inertial>
-          <pose>0 0 0 0 0 0</pose>
-          <mass>1</mass>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-        </inertial>
-        <enable_wind>false</enable_wind>
-      </link>
-      <pose>2.8833599090576172 -1.6619000434875488 0.79254275560379028 0 0 0</pose>
-      <static>false</static>
-      <self_collide>false</self_collide>
-    </model>
     <model name='FoodCourtTable1_1'>
       <static>true</static>
       <link name='body'>
@@ -608,9 +580,9 @@
             <specular>1 1 1 1</specular>
             <pbr>
               <metal>
-                <albedo_map>materials/textures/DiningChair_Albedo.jpg</albedo_map>
-                <normal_map>materials/textures/DiningChair_Normal.jpg</normal_map>
-                <roughness_map>materials/textures/DiningChair_Roughness.jpg</roughness_map>
+                <albedo_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Albedo.jpg</albedo_map>
+                <normal_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Normal.jpg</normal_map>
+                <roughness_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Roughness.jpg</roughness_map>
               </metal>
             </pbr>
           </material>
@@ -737,9 +709,9 @@
             <specular>1 1 1 1</specular>
             <pbr>
               <metal>
-                <albedo_map>materials/textures/DiningChair_Albedo.jpg</albedo_map>
-                <normal_map>materials/textures/DiningChair_Normal.jpg</normal_map>
-                <roughness_map>materials/textures/DiningChair_Roughness.jpg</roughness_map>
+                <albedo_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Albedo.jpg</albedo_map>
+                <normal_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Normal.jpg</normal_map>
+                <roughness_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Roughness.jpg</roughness_map>
               </metal>
             </pbr>
           </material>
@@ -971,9 +943,9 @@
             <specular>1 1 1 1</specular>
             <pbr>
               <metal>
-                <albedo_map>materials/textures/Armchair_Albedo.png</albedo_map>
-                <normal_map>materials/textures/Armchair_Normal.png</normal_map>
-                <roughness_map>materials/textures/Armchair_Roughness.png</roughness_map>
+                <albedo_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/armchair/2/materials/textures/Armchair_Albedo.png</albedo_map>
+                <normal_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/armchair/2/materials/textures/Armchair_Normal.png</normal_map>
+                <roughness_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/armchair/2/materials/textures/Armchair_Roughness.png</roughness_map>
               </metal>
             </pbr>
           </material>
@@ -1168,62 +1140,6 @@
       <static>false</static>
       <self_collide>false</self_collide>
     </model>
-    <model name='ACE_Coffee_Mug_Kristen_16_oz_cup'>
-      <link name='link_0'>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/ace_coffee_mug_kristen_16_oz_cup/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <collision name='collision_0'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/ace_coffee_mug_kristen_16_oz_cup/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </collision>
-        <pose>0 0 0 0 0 0</pose>
-        <inertial>
-          <pose>0 0 0 0 0 0</pose>
-          <mass>1</mass>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-        </inertial>
-        <enable_wind>false</enable_wind>
-      </link>
-      <pose>-3.153709888458252 -8.6086797714233398 0.37955272197723389 0 0 0</pose>
-      <static>false</static>
-      <self_collide>false</self_collide>
-    </model>
-    <model name='ACE_Coffee_Mug_Kristen_16_oz_cup_1'>
-      <link name='link_0'>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/ace_coffee_mug_kristen_16_oz_cup/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <collision name='collision_0'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/ace_coffee_mug_kristen_16_oz_cup/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </collision>
-      </link>
-      <pose>-3.2762367198251017 -8.4927427760858762 0.37955299019813538 0 0 0</pose>
-      <static>false</static>
-      <self_collide>false</self_collide>
-    </model>
     <model name='LampAndStand'>
       <static>true</static>
       <link name='body'>
@@ -1257,41 +1173,6 @@
         <enable_wind>false</enable_wind>
       </link>
       <pose>-4.2716086672713143 -1.3494842535174332 0 0 0 0</pose>
-      <self_collide>false</self_collide>
-    </model>
-    <model name='Black_Decker_CM2035B_12Cup_Thermal_Coffeemaker'>
-      <link name='link_0'>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/black_decker_cm2035b_12cup_thermal_coffeemaker/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <collision name='collision_0'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/black_decker_cm2035b_12cup_thermal_coffeemaker/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </collision>
-        <pose>0 0 0 0 0 0</pose>
-        <inertial>
-          <pose>0 0 0 0 0 0</pose>
-          <mass>1</mass>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-        </inertial>
-        <enable_wind>false</enable_wind>
-      </link>
-      <pose>-4.3667798042297363 7.2134099006652832 1.2340999841690063 0 0 -0.0081528708818528056</pose>
-      <static>false</static>
       <self_collide>false</self_collide>
     </model>
     <model name='VisitorChair'>
@@ -2547,9 +2428,9 @@
             <specular>1 1 1 1</specular>
             <pbr>
               <metal>
-                <albedo_map>materials/textures/DiningChair_Albedo.jpg</albedo_map>
-                <normal_map>materials/textures/DiningChair_Normal.jpg</normal_map>
-                <roughness_map>materials/textures/DiningChair_Roughness.jpg</roughness_map>
+                <albedo_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Albedo.jpg</albedo_map>
+                <normal_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Normal.jpg</normal_map>
+                <roughness_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Roughness.jpg</roughness_map>
               </metal>
             </pbr>
           </material>
@@ -2676,9 +2557,9 @@
             <specular>1 1 1 1</specular>
             <pbr>
               <metal>
-                <albedo_map>materials/textures/DiningChair_Albedo.jpg</albedo_map>
-                <normal_map>materials/textures/DiningChair_Normal.jpg</normal_map>
-                <roughness_map>materials/textures/DiningChair_Roughness.jpg</roughness_map>
+                <albedo_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Albedo.jpg</albedo_map>
+                <normal_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Normal.jpg</normal_map>
+                <roughness_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Roughness.jpg</roughness_map>
               </metal>
             </pbr>
           </material>
@@ -2791,9 +2672,9 @@
             <specular>1 1 1 1</specular>
             <pbr>
               <metal>
-                <albedo_map>materials/textures/DiningChair_Albedo.jpg</albedo_map>
-                <normal_map>materials/textures/DiningChair_Normal.jpg</normal_map>
-                <roughness_map>materials/textures/DiningChair_Roughness.jpg</roughness_map>
+                <albedo_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Albedo.jpg</albedo_map>
+                <normal_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Normal.jpg</normal_map>
+                <roughness_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Roughness.jpg</roughness_map>
               </metal>
             </pbr>
           </material>
@@ -2906,9 +2787,9 @@
             <specular>1 1 1 1</specular>
             <pbr>
               <metal>
-                <albedo_map>materials/textures/DiningChair_Albedo.jpg</albedo_map>
-                <normal_map>materials/textures/DiningChair_Normal.jpg</normal_map>
-                <roughness_map>materials/textures/DiningChair_Roughness.jpg</roughness_map>
+                <albedo_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Albedo.jpg</albedo_map>
+                <normal_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Normal.jpg</normal_map>
+                <roughness_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Roughness.jpg</roughness_map>
               </metal>
             </pbr>
           </material>
@@ -3021,9 +2902,9 @@
             <specular>1 1 1 1</specular>
             <pbr>
               <metal>
-                <albedo_map>materials/textures/DiningChair_Albedo.jpg</albedo_map>
-                <normal_map>materials/textures/DiningChair_Normal.jpg</normal_map>
-                <roughness_map>materials/textures/DiningChair_Roughness.jpg</roughness_map>
+                <albedo_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Albedo.jpg</albedo_map>
+                <normal_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Normal.jpg</normal_map>
+                <roughness_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Roughness.jpg</roughness_map>
               </metal>
             </pbr>
           </material>
@@ -3150,9 +3031,9 @@
             <specular>1 1 1 1</specular>
             <pbr>
               <metal>
-                <albedo_map>materials/textures/DiningChair_Albedo.jpg</albedo_map>
-                <normal_map>materials/textures/DiningChair_Normal.jpg</normal_map>
-                <roughness_map>materials/textures/DiningChair_Roughness.jpg</roughness_map>
+                <albedo_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Albedo.jpg</albedo_map>
+                <normal_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Normal.jpg</normal_map>
+                <roughness_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Roughness.jpg</roughness_map>
               </metal>
             </pbr>
           </material>
@@ -3265,9 +3146,9 @@
             <specular>1 1 1 1</specular>
             <pbr>
               <metal>
-                <albedo_map>materials/textures/DiningChair_Albedo.jpg</albedo_map>
-                <normal_map>materials/textures/DiningChair_Normal.jpg</normal_map>
-                <roughness_map>materials/textures/DiningChair_Roughness.jpg</roughness_map>
+                <albedo_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Albedo.jpg</albedo_map>
+                <normal_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Normal.jpg</normal_map>
+                <roughness_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Roughness.jpg</roughness_map>
               </metal>
             </pbr>
           </material>
@@ -3394,9 +3275,9 @@
             <specular>1 1 1 1</specular>
             <pbr>
               <metal>
-                <albedo_map>materials/textures/DiningChair_Albedo.jpg</albedo_map>
-                <normal_map>materials/textures/DiningChair_Normal.jpg</normal_map>
-                <roughness_map>materials/textures/DiningChair_Roughness.jpg</roughness_map>
+                <albedo_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Albedo.jpg</albedo_map>
+                <normal_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Normal.jpg</normal_map>
+                <roughness_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Roughness.jpg</roughness_map>
               </metal>
             </pbr>
           </material>
@@ -3509,9 +3390,9 @@
             <specular>1 1 1 1</specular>
             <pbr>
               <metal>
-                <albedo_map>materials/textures/DiningChair_Albedo.jpg</albedo_map>
-                <normal_map>materials/textures/DiningChair_Normal.jpg</normal_map>
-                <roughness_map>materials/textures/DiningChair_Roughness.jpg</roughness_map>
+                <albedo_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Albedo.jpg</albedo_map>
+                <normal_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Normal.jpg</normal_map>
+                <roughness_map>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/dining chair/1/materials/textures/DiningChair_Roughness.jpg</roughness_map>
               </metal>
             </pbr>
           </material>
@@ -3714,7 +3595,7 @@
             </mesh>
           </geometry>
           <plugin name='ignition::gazebo::systems::Thermal' filename='ignition-gazebo-thermal-system'>
-            <heat_signature>materials/textures/RescueRandy_Thermal.png</heat_signature>
+            <heat_signature>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/rescue randy sitting/8/materials/textures/RescueRandy_Thermal.png</heat_signature>
             <max_temp>305</max_temp>
           </plugin>
         </visual>
@@ -3811,118 +3692,6 @@
         <enable_wind>false</enable_wind>
       </link>
       <pose>-1.5208408832550049 4.9670300483703613 1.2362500429153442 0 0 0</pose>
-      <static>false</static>
-      <self_collide>false</self_collide>
-    </model>
-    <model name='STEAK_SET'>
-      <link name='link_0'>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/steak_set/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <collision name='collision_0'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/steak_set/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </collision>
-        <pose>0 0 0 0 0 0</pose>
-        <inertial>
-          <pose>0 0 0 0 0 0</pose>
-          <mass>1</mass>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-        </inertial>
-        <enable_wind>false</enable_wind>
-      </link>
-      <pose>-3.0675599575042725 6.6525201797485352 1.2344068288803101 0 0 0</pose>
-      <static>false</static>
-      <self_collide>false</self_collide>
-    </model>
-    <model name='Threshold_Porcelain_Coffee_Mug_All_Over_Bead_White'>
-      <link name='link_0'>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/threshold_porcelain_coffee_mug_all_over_bead_white/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <collision name='collision_0'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/threshold_porcelain_coffee_mug_all_over_bead_white/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </collision>
-        <pose>0 0 0 0 0 0</pose>
-        <inertial>
-          <pose>0 0 0 0 0 0</pose>
-          <mass>1</mass>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-        </inertial>
-        <enable_wind>false</enable_wind>
-      </link>
-      <pose>-4.5711498260498047 3.455359935760498 1.226535439491272 0 0 0</pose>
-      <static>false</static>
-      <self_collide>false</self_collide>
-    </model>
-    <model name='Threshold_Porcelain_Coffee_Mug_All_Over_Bead_White_1'>
-      <link name='link_0'>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/threshold_porcelain_coffee_mug_all_over_bead_white/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <collision name='collision_0'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/threshold_porcelain_coffee_mug_all_over_bead_white/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </collision>
-      </link>
-      <pose>-2.8530553453888796 6.7861174372819271 1.2265399694442749 0 0 0</pose>
-      <static>false</static>
-      <self_collide>false</self_collide>
-    </model>
-    <model name='Threshold_Porcelain_Coffee_Mug_All_Over_Bead_White_2'>
-      <link name='link_0'>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/threshold_porcelain_coffee_mug_all_over_bead_white/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <collision name='collision_0'>
-          <geometry>
-            <mesh>
-              <uri>file:///root/.gz/fuel/fuel.gazebosim.org/googleresearch/models/threshold_porcelain_coffee_mug_all_over_bead_white/1/meshes/model.obj</uri>
-            </mesh>
-          </geometry>
-        </collision>
-      </link>
-      <pose>-1.3835147028139212 4.8372913313271519 1.2265399694442749 0 0 0</pose>
       <static>false</static>
       <self_collide>false</self_collide>
     </model>

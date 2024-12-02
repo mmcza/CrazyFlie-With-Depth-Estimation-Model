@@ -141,4 +141,13 @@ WORKDIR /root
 
 # Source the ROS2 workspace
 RUN echo "source /root/crazyflie_mapping_demo/ros2_ws/install/setup.bash" >> ~/.bashrc
-ENV GZ_SIM_RESOURCE_PATH="/root/crazyflie_mapping_demo/simulation_ws/crazyflie-simulation/simulator_files/gazebo/"
+
+ENV GZ_SIM_RESOURCE_PATH="/root/Shared/crazyflie_mapping_demo/simulation_ws/crazyflie-simulation/simulator_files/gazebo/"
+
+# Copy download_models.sh and run it
+COPY download_models.sh /root/
+COPY models_links.txt /root/
+
+# Run the download_models.sh script
+RUN chmod +x /root/download_models.sh && \
+    ./download_models.sh
