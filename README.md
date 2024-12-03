@@ -44,3 +44,11 @@ In second terminal
 ```Shell
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
+
+## Set position of the drone
+
+```Shell
+gz service -s /world/empty/set_pose --reqtype gz.msgs.Pose --reptype gz.msgs.Boolean --timeout 300 -r "name: 'crazyflie', position: {x: -1.0, y: -1.0, z: 1.0}"
+```
+
+[Link](https://github.com/gazebosim/gz-msgs/blob/gz-msgs11/proto/gz/msgs/pose.proto) to Pose message declaration
