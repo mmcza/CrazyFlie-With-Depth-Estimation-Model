@@ -48,7 +48,7 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ## Set position of the drone
 
 ```Shell
-gz service -s /world/empty/set_pose --reqtype gz.msgs.Pose --reptype gz.msgs.Boolean --timeout 300 -r "name: 'crazyflie', position: {x: -1.0, y: -1.0, z: 1.0}"
+gz service -s /world/empty/set_pose --reqtype gz.msgs.Pose --reptype gz.msgs.Boolean --timeout 300 -r "name: 'crazyflie', position: {x: -1.0, y: -1.0, z: 1.0}, orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}"
 ```
 
 [Link](https://github.com/gazebosim/gz-msgs/blob/gz-msgs11/proto/gz/msgs/pose.proto) to Pose message declaration
@@ -58,5 +58,5 @@ gz service -s /world/empty/set_pose --reqtype gz.msgs.Pose --reptype gz.msgs.Boo
 To run
 
 ```Shell
-ros2 run crazyflie_data_collector data_collector
+ros2 run crazyflie_data_collector data_collector --ros-args -p min_x:=-10.0 -p max_x:=10.0 -p min_y:=-10.0 -p max_y:=10.0 -p min_z:=0.0 -p max_z:=3.0 -p num_of_files:=10 -p output_path:="/root/Shared/crazyflie_images/"
 ```
