@@ -52,3 +52,11 @@ gz service -s /world/empty/set_pose --reqtype gz.msgs.Pose --reptype gz.msgs.Boo
 ```
 
 [Link](https://github.com/gazebosim/gz-msgs/blob/gz-msgs11/proto/gz/msgs/pose.proto) to Pose message declaration
+
+## Collect training data
+
+To run
+
+```Shell
+ros2 run crazyflie_data_collector data_collector
+```
