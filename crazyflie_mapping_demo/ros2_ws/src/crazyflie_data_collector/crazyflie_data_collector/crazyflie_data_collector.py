@@ -9,6 +9,9 @@ from tf_transformations import quaternion_from_euler, quaternion_multiply, quate
 from rcl_interfaces.msg import ParameterDescriptor
 import os
 from geometry_msgs.msg import TransformStamped
+import cv2
+import numpy as np
+from cv_bridge import CvBridge, CvBridgeError
 
 class ImageSubscriber(Node):
 
@@ -61,6 +64,9 @@ class ImageSubscriber(Node):
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self)
 
+        # Create CvBridge
+        self.bridge = CvBridge()
+
         # Initialize variables
         self.current_tf = None
         self.send_new_tf = True
@@ -73,23 +79,25 @@ class ImageSubscriber(Node):
 
 
     def camera_callback(self, msg):
-        transform, success = self.lookup_transform()
-        if success:
-            if self.current_tf is not None:
-                if are_transforms_close(self.current_tf, transform):
-                    self.got_camera_image = True
-                    self.camera_image = msg
+        if not self.got_camera_image:
+            transform, success = self.lookup_transform()
+            if success:
+                if self.current_tf is not None:
+                    if are_transforms_close(self.current_tf, transform):
+                        self.got_camera_image = True
+                        self.camera_image = msg
         
         if self.got_camera_image and self.got_depth_camera_image:
             self.save_images()
 
     def depth_camera_callback(self, msg):
-        transform, success = self.lookup_transform()
-        if success:
-            if self.current_tf is not None:
-                if are_transforms_close(self.current_tf, transform):
-                    self.got_depth_camera_image = True
-                    self.depth_camera_image = msg
+        if not self.got_depth_camera_image:
+            transform, success = self.lookup_transform()
+            if success:
+                if self.current_tf is not None:
+                    if are_transforms_close(self.current_tf, transform):
+                        self.got_depth_camera_image = True
+                        self.depth_camera_image = msg
         
         if self.got_camera_image and self.got_depth_camera_image:
             self.save_images()
@@ -100,19 +108,51 @@ class ImageSubscriber(Node):
                 'crazyflie/odom',
                 'crazyflie/base_footprint',
                 rclpy.time.Time())
-            self.get_logger().info(f'Found transform: {transform}')
+            # self.get_logger().info(f'Found transform: {transform}')
             return transform, True
         except TransformException as ex:
             self.get_logger().error(f'Could not find a transform: {ex}')
             return None, False
         
     def save_images(self):
-        # TODO: Implement saving images
+        # Get the current ROS time for unique filenames
+        current_time = self.get_clock().now().to_msg()
+        timestamp = f"{current_time.sec}_{current_time.nanosec}"
+
+        # Prepare filenames
+        camera_filename = os.path.join(self.output_path, 'camera', f'c_{timestamp}.png')
+        depth_camera_filename = os.path.join(self.output_path, 'depth_camera', f'd_{timestamp}.png')
+
+        try:
+            # Convert the camera image message to an OpenCV image
+            cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, desired_encoding='bgr8')
+            # Save the camera image
+            cv2.imwrite(camera_filename, cv_image)
+
+            # Convert the depth image message to a NumPy array
+            depth_image = self.bridge.imgmsg_to_cv2(self.depth_camera_image, desired_encoding='passthrough')
+
+            # Check for NaN and Inf values in depth data
+            depth_array = np.nan_to_num(depth_image, copy=False, nan=0.0, posinf=0.0, neginf=0.0)
+
+            # Convert depth data to 16-bit unsigned integers
+            # Scale depth values to the range [0, 65535] based on the sensor's max depth
+            max_depth_sensor_range = 10.0  # Adjust this value to the sensor's maximum depth range
+            depth_scaled = np.clip((depth_array / max_depth_sensor_range) * 65535, 0, 65535).astype(np.uint16)
+
+            # Save the depth image
+            cv2.imwrite(depth_camera_filename, depth_scaled)
+
+            self.get_logger().info(f'Saved images: {camera_filename}, {depth_camera_filename}')
+        except CvBridgeError as e:
+            self.get_logger().error(f'Error converting images: {e}')
+        except Exception as e:
+            self.get_logger().error(f'Unexpected error: {e}')
+
         self.images_saved += 1
         self.got_camera_image = False
         self.got_depth_camera_image = False
         self.send_new_tf = True
-        pass
 
 
     def timer_callback(self):
