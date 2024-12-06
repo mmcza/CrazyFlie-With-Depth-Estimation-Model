@@ -1,11 +1,11 @@
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, LaserScan
 import tf2_ros
 from tf2_ros import TransformException
 import random
 import math
-from tf_transformations import quaternion_from_euler, quaternion_multiply, quaternion_inverse
+from tf_transformations import quaternion_from_euler, euler_from_quaternion
 from rcl_interfaces.msg import ParameterDescriptor
 import os
 from geometry_msgs.msg import TransformStamped
@@ -48,6 +48,9 @@ class ImageSubscriber(Node):
         if not os.path.exists(os.path.join(self.output_path, 'depth_camera')):
             os.makedirs(os.path.join(self.output_path, 'depth_camera'))
 
+        if not os.path.exists(os.path.join(self.output_path, 'distance_sensor')):
+            os.makedirs(os.path.join(self.output_path, 'distance_sensor'))        
+
         # Create subscriptions
         self.subscription_camera = self.create_subscription(
             Image,
@@ -59,6 +62,12 @@ class ImageSubscriber(Node):
             '/crazyflie/depth_camera/depth_image',
             self.depth_camera_callback,
             10)
+        self.subscription_distance_sensor = self.create_subscription(
+            LaserScan,
+            '/crazyflie/scan',
+            self.distance_sensor_callback,
+            10)
+
 
         # Create tf listener
         self.tf_buffer = tf2_ros.Buffer()
@@ -74,9 +83,10 @@ class ImageSubscriber(Node):
         self.timer = self.create_timer(0.1, self.timer_callback)
         self.got_camera_image = False
         self.got_depth_camera_image = False
+        self.got_distance_sensor_data = False
         self.camera_image = None
         self.depth_camera_image = None
-
+        self.distance_sensor_data = None
 
     def camera_callback(self, msg):
         if not self.got_camera_image:
@@ -87,7 +97,7 @@ class ImageSubscriber(Node):
                         self.got_camera_image = True
                         self.camera_image = msg
         
-        if self.got_camera_image and self.got_depth_camera_image:
+        if self.got_camera_image and self.got_depth_camera_image and self.got_distance_sensor_data:
             self.save_images()
 
     def depth_camera_callback(self, msg):
@@ -99,7 +109,19 @@ class ImageSubscriber(Node):
                         self.got_depth_camera_image = True
                         self.depth_camera_image = msg
         
-        if self.got_camera_image and self.got_depth_camera_image:
+        if self.got_camera_image and self.got_depth_camera_image and self.got_distance_sensor_data:
+            self.save_images()
+
+    def distance_sensor_callback(self, msg):
+        if not self.got_distance_sensor_data:
+            transform, success = self.lookup_transform()
+            if success:
+                if self.current_tf is not None:
+                    if are_transforms_close(self.current_tf, transform):
+                        self.got_distance_sensor_data = True
+                        self.distance_sensor_data = msg
+        
+        if self.got_camera_image and self.got_depth_camera_image and self.got_distance_sensor_data:
             self.save_images()
 
     def lookup_transform(self):
@@ -115,6 +137,13 @@ class ImageSubscriber(Node):
             return None, False
         
     def save_images(self):
+        if self.images_saved >= self.num_of_files:
+            self.get_logger().info('Desired number of images saved. Shutting down...')
+            # Destroy the node and shut down rclpy
+            self.destroy_node()
+            rclpy.shutdown()
+            return
+
         # Get the current ROS time for unique filenames
         current_time = self.get_clock().now().to_msg()
         timestamp = f"{current_time.sec}_{current_time.nanosec}"
@@ -122,6 +151,7 @@ class ImageSubscriber(Node):
         # Prepare filenames
         camera_filename = os.path.join(self.output_path, 'camera', f'c_{timestamp}.png')
         depth_camera_filename = os.path.join(self.output_path, 'depth_camera', f'd_{timestamp}.png')
+        distance_sensor_filename = os.path.join(self.output_path, 'distance_sensor', f'ds_{timestamp}.txt')
 
         try:
             # Convert the camera image message to an OpenCV image
@@ -143,7 +173,17 @@ class ImageSubscriber(Node):
             # Save the depth image
             cv2.imwrite(depth_camera_filename, depth_scaled)
 
-            self.get_logger().info(f'Saved images: {camera_filename}, {depth_camera_filename}')
+            # Get the distance in front of the Crazyflie
+            num_ranges = len(self.distance_sensor_data.ranges)
+            middle_index = num_ranges // 2
+            distance = self.distance_sensor_data.ranges[middle_index]
+            intensity = self.distance_sensor_data.intensities[middle_index]
+
+            # Save the distance sensor data
+            with open(distance_sensor_filename, 'w') as f:
+                f.write(f'{distance}, {intensity}\n')
+
+            self.get_logger().info(f'Saved {self.images_saved + 1} images')
         except CvBridgeError as e:
             self.get_logger().error(f'Error converting images: {e}')
         except Exception as e:
@@ -152,6 +192,7 @@ class ImageSubscriber(Node):
         self.images_saved += 1
         self.got_camera_image = False
         self.got_depth_camera_image = False
+        self.got_distance_sensor_data = False
         self.send_new_tf = True
 
 
@@ -161,7 +202,7 @@ class ImageSubscriber(Node):
             position, orientation = generate_random_position_and_orientation(
                 self.min_x, self.max_x, self.min_y, self.max_y, self.min_z, self.max_z)
 
-            self.get_logger().info(f'Generated position: {position}, orientation: {orientation}')
+            # self.get_logger().info(f'Generated position: {position}, orientation: {orientation}')
             self.current_tf = TransformStamped()
             self.current_tf.header.stamp = self.get_clock().now().to_msg()
             self.current_tf.header.frame_id = 'crazyflie/odom'
@@ -182,7 +223,7 @@ class ImageSubscriber(Node):
             )
 
             # Log the command for debugging
-            self.get_logger().info(f'Executing command: {command}')
+            # self.get_logger().info(f'Executing command: {command}')
 
             # Execute the command
             os.system(command)
@@ -208,7 +249,7 @@ def are_transforms_close(transform1: TransformStamped, transform2: TransformStam
     if distance > 0.01:  # 1 cm tolerance
         return False
 
-    # Calculate orientation difference
+    # Extract quaternions
     q1 = [
         transform1.transform.rotation.x,
         transform1.transform.rotation.y,
@@ -221,11 +262,19 @@ def are_transforms_close(transform1: TransformStamped, transform2: TransformStam
         transform2.transform.rotation.z,
         transform2.transform.rotation.w,
     ]
-    # Compute the relative rotation
-    q_diff = quaternion_multiply(q2, quaternion_inverse(q1))
-    angle = 2 * math.acos(min(1.0, max(-1.0, q_diff[3])))  # Clamp value between -1 and 1
-    angle_degrees = math.degrees(angle)
-    if angle_degrees > 1.0:  # 1.0 degrees tolerance
+
+    # Convert quaternions to Euler angles (roll, pitch, yaw)
+    _, _, yaw1 = euler_from_quaternion(q1)
+    _, _, yaw2 = euler_from_quaternion(q2)
+
+    # Calculate the difference in yaw
+    yaw_diff = abs(yaw1 - yaw2)
+    # Normalize the yaw difference to the range [0, pi]
+    yaw_diff = min(yaw_diff, 2 * math.pi - yaw_diff)
+
+    # Convert to degrees
+    yaw_diff_degrees = math.degrees(yaw_diff)
+    if yaw_diff_degrees > 2.0:  # 2.0 degrees tolerance
         return False
 
     return True

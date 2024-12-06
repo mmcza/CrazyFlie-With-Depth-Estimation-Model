@@ -55,8 +55,8 @@ gz service -s /world/empty/set_pose --reqtype gz.msgs.Pose --reptype gz.msgs.Boo
 
 ## Collect training data
 
-To run
+To run in `the world_cafe_1.sdf` (adjust the `num_of_files` to the desired number of pictures)
 
 ```Shell
-ros2 run crazyflie_data_collector data_collector --ros-args -p min_x:=-10.0 -p max_x:=10.0 -p min_y:=-10.0 -p max_y:=10.0 -p min_z:=0.0 -p max_z:=3.0 -p num_of_files:=10 -p output_path:="/root/Shared/crazyflie_images/"
+ros2 run crazyflie_data_collector data_collector --ros-args -p min_x:=-4.75 -p max_x:=4.0 -p min_y:=-10.5 -p max_y:=11.5 -p min_z:=0.1 -p max_z:=2.50 -p num_of_files:=10 -p output_path:="/root/Shared/crazyflie_images/"
 ```
