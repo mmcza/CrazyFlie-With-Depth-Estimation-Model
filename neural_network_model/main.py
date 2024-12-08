@@ -1,10 +1,10 @@
 import os
-from training.trainer import train_model
+from neural_network_model.training.trainer import train_model
 
 def main():
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-    camera_dir = os.path.join(ROOT_DIR, "crazyflie_images", "camera")
-    depth_dir = os.path.join(ROOT_DIR, "crazyflie_images", "depth_camera")
+    camera_dir = os.path.join(ROOT_DIR, "..", "crazyflie_images", "camera")
+    depth_dir = os.path.join(ROOT_DIR, "..", "crazyflie_images", "depth_camera")
 
     # Parametry treningu
     batch_size = 16

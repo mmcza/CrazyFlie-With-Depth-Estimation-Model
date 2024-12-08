@@ -1,5 +1,7 @@
 # CrazyFlie With Depth Image Model
- 
+
+
+
 ## Downloading the repository
 
 Clone the repository into `~/crazyflie_sim_shared` directory:
@@ -65,3 +67,24 @@ ros2 run crazyflie_data_collector data_collector --ros-args -p min_x:=-4.75 -p m
 
 ```bash
 python data_viewer.py
+```
+
+## Model training
+
+### Install the required packages
+
+Install the required packages by running the following command:
+
+```Shell
+pip install -r requirements.txt
+```
+
+Check the CUDA version of the GPU and install the appropriate version of PyTorch from the [official website](https://pytorch.org/get-started/locally/).
+
+### Start the training
+
+To start the training, run the following command:
+
+```Shell
+python main.py
+```

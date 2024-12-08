@@ -3,11 +3,11 @@ from torch.utils.data import DataLoader
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from pytorch_lightning.loggers import TensorBoardLogger
-from datasets.dataset import AugmentedDepthDataset
-from models.unet_with_attention import UNetWithAttention
+from neural_network_model.datasets.dataset import AugmentedDepthDataset
+from neural_network_model.models.unet_with_attention import UNetWithAttention
 
 
-def train_model(camera_dir, depth_dir, batch_size=16, max_epochs=25, lr=1e-4):
+def train_model(camera_dir, depth_dir, batch_size=8, max_epochs=25, lr=1e-4):
 
     if torch.cuda.is_available():
         accelerator = "gpu"
@@ -22,8 +22,8 @@ def train_model(camera_dir, depth_dir, batch_size=16, max_epochs=25, lr=1e-4):
     train_dataset = AugmentedDepthDataset(camera_dir, depth_dir, augment=True, target_size=(256, 256))
     val_dataset = AugmentedDepthDataset(camera_dir, depth_dir, augment=False, target_size=(256, 256))
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4, persistent_workers=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4, persistent_workers=True)
     model = UNetWithAttention(input_channels=1, learning_rate=lr, attention_type='cbam')
 
 

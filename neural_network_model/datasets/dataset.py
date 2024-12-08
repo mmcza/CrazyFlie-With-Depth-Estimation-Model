@@ -23,11 +23,10 @@ class AugmentedDepthDataset(Dataset):
         file_pairs = []
         for cam_file in camera_files:
             cam_id = cam_file.split("_", 1)[1]
-            for dep_file in depth_files:
-                dep_id = dep_file.split("_", 1)[1]
-                if cam_id == dep_id:
-                    file_pairs.append((cam_file, dep_file))
-                    break
+            dep_file = "d_" + cam_id
+            if dep_file in depth_files:
+                file_pairs.append((cam_file, dep_file))
+
         return file_pairs
 
     def apply_contrast_enhancement(self, image):
