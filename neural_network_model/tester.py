@@ -2,21 +2,29 @@ import torch
 import torchmetrics
 import matplotlib.pyplot as plt
 from neural_network_model.models.unet_with_attention import UNetWithAttention
-from neural_network_model.datasets.dataset import AugmentedDepthDataset
+from neural_network_model.datasets.dataset import DepthDataset
 from torch.utils.data import DataLoader
-import os
+from pathlib import Path
+import albumentations as A
+import albumentations.pytorch.transforms
 
 def main():
-    model_path = "unet_model.ckpt"
+    model_path = "logs/depth_estimation/version_2/checkpoints/epoch=14-step=750.ckpt"
     trained_model = UNetWithAttention.load_from_checkpoint(model_path)
     trained_model = trained_model.cuda()
     trained_model.eval()
 
-    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-    camera_dir = os.path.join(ROOT_DIR, "..", "crazyflie_images", "camera")
-    depth_dir = os.path.join(ROOT_DIR, "..", "crazyflie_images", "depth_camera")
+    ROOT_DIR = Path(__file__).resolve().parent
+    camera_dir = ROOT_DIR.parent / "crazyflie_images" / "camera"
+    camera_files = sorted(camera_dir.glob("*.png"))
 
-    test_dataset = AugmentedDepthDataset(camera_dir, depth_dir, augment=False, target_size=(256, 256))
+    transforms = A.Compose([
+        A.Resize(width=256, height=256),
+        A.Normalize(mean=(0.5,), std=(0.5,)),
+        A.pytorch.transforms.ToTensorV2(transpose_mask=True),
+    ])
+
+    test_dataset = DepthDataset(camera_files, transforms=transforms)
 
     test_loader = DataLoader(test_dataset, batch_size=8, shuffle=True, num_workers=4, persistent_workers=True)
 

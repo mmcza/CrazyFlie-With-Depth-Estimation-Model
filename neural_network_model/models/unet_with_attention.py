@@ -44,7 +44,10 @@ class UNetWithAttention(pl.LightningModule):
         self.decoder2 = UNetBlockWithAttention(256, 128, attention=attention_type)
         self.upconv1 = nn.ConvTranspose2d(128, 64, kernel_size=2, stride=2)
         self.decoder1 = UNetBlockWithAttention(128, 64, attention=attention_type)
-        self.final = nn.Conv2d(64, 1, kernel_size=1)
+        self.final = nn.Sequential(
+            nn.Conv2d(64, 1, kernel_size=1),
+            nn.Sigmoid()
+        )
         self.rmse_metric = torchmetrics.MeanSquaredError(squared=False)
         self.mae_metric = torchmetrics.MeanAbsoluteError()
 
