@@ -97,7 +97,7 @@ class ImageSubscriber(Node):
                         self.got_camera_image = True
                         self.camera_image = msg
         
-        if self.got_camera_image and self.got_depth_camera_image and self.got_distance_sensor_data:
+        if self.got_camera_image and self.got_depth_camera_image and self.got_distance_sensor_data and not self.send_new_tf:
             self.save_images()
 
     def depth_camera_callback(self, msg):
@@ -109,7 +109,7 @@ class ImageSubscriber(Node):
                         self.got_depth_camera_image = True
                         self.depth_camera_image = msg
         
-        if self.got_camera_image and self.got_depth_camera_image and self.got_distance_sensor_data:
+        if self.got_camera_image and self.got_depth_camera_image and self.got_distance_sensor_data and not self.send_new_tf:
             self.save_images()
 
     def distance_sensor_callback(self, msg):
@@ -121,7 +121,7 @@ class ImageSubscriber(Node):
                         self.got_distance_sensor_data = True
                         self.distance_sensor_data = msg
         
-        if self.got_camera_image and self.got_depth_camera_image and self.got_distance_sensor_data:
+        if self.got_camera_image and self.got_depth_camera_image and self.got_distance_sensor_data and not self.send_new_tf:
             self.save_images()
 
     def lookup_transform(self):
@@ -143,6 +143,10 @@ class ImageSubscriber(Node):
             self.destroy_node()
             rclpy.shutdown()
             return
+
+        self.got_camera_image = False
+        self.got_depth_camera_image = False
+        self.got_distance_sensor_data = False
 
         # Get the current ROS time for unique filenames
         current_time = self.get_clock().now().to_msg()
@@ -190,9 +194,6 @@ class ImageSubscriber(Node):
             self.get_logger().error(f'Unexpected error: {e}')
 
         self.images_saved += 1
-        self.got_camera_image = False
-        self.got_depth_camera_image = False
-        self.got_distance_sensor_data = False
         self.send_new_tf = True
 
 
@@ -227,6 +228,9 @@ class ImageSubscriber(Node):
 
             # Execute the command
             os.system(command)
+            self.got_camera_image = False
+            self.got_depth_camera_image = False
+            self.got_distance_sensor_data = False
 
 def generate_random_position_and_orientation(min_x, max_x, min_y, max_y, min_z, max_z):
     x = random.uniform(min_x, max_x)
