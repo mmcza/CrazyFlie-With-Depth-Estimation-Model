@@ -1,0 +1,1638 @@
+<sdf version='1.10'>
+  <world name='empty'>
+    <physics name='1ms' type='ignored'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system'/>
+    <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
+    <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
+    <plugin name='gz::sim::systems::Contact' filename='gz-sim-contact-system'/>
+    <plugin name='gz::sim::systems::Sensors' filename='gz-sim-sensors-system'/>
+    <gravity>0 0 -9.8000000000000007</gravity>
+    <magnetic_field>5.5644999999999998e-06 2.2875799999999999e-05 -4.2388400000000002e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <scene>
+      <ambient>0.400000006 0.400000006 0.400000006 1</ambient>
+      <background>0.699999988 0.699999988 0.699999988 1</background>
+      <shadows>true</shadows>
+    </scene>
+      <model name='crazyflie'>
+      <link name='crazyflie/body'>
+        <pose>0 0 0.017425 0 0 0</pose>
+        <inertial>
+          <mass>0.025000000000000001</mass>
+          <inertia>
+            <ixx>1.657171e-05</ixx>
+            <iyy>1.6655601999999999e-05</iyy>
+            <izz>2.9261652e-05</izz>
+            <ixy>8.3080600000000001e-07</ixy>
+            <ixz>7.1827699999999997e-07</ixz>
+            <iyz>1.8001970000000001e-06</iyz>
+          </inertia>
+          <pose>0 0 0 0 0 0</pose>
+        </inertial>
+        <collision name='crazyflie/body_collision'>
+          <geometry>
+            <box>
+              <size>0.10000000000000001 0.10000000000000001 0.034849999999999999</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <visual name='crazyflie/body_visual'>
+          <geometry>
+            <mesh>
+              <uri>file:///root/Shared/crazyflie_mapping_demo/simulation_ws/crazyflie-simulation/meshes/collada_files/cf2_assembly.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <sensor name='multiranger' type='gpu_lidar'>
+          <pose>0 0 0.20000000000000001 0 0 0</pose>
+          <topic>lidar</topic>
+          <update_rate>10</update_rate>
+          <enable_metrics>false</enable_metrics>
+          <lidar>
+            <scan>
+              <horizontal>
+                <samples>4</samples>
+                <resolution>1</resolution>
+                <min_angle>-3.1400000000000001</min_angle>
+                <max_angle>1.5700000000000001</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>1</samples>
+                <min_angle>0</min_angle>
+                <max_angle>0</max_angle>
+                <resolution>0.01</resolution>
+              </vertical>
+            </scan>
+            <range>
+              <min>0.01</min>
+              <max>3.4900000000000002</max>
+              <resolution>0.01</resolution>
+            </range>
+            <noise>
+              <type>none</type>
+              <mean>0</mean>
+              <stddev>0</stddev>
+            </noise>
+            <visibility_mask>4294967295</visibility_mask>
+          </lidar>
+        </sensor>
+        <sensor name='ai_deck_camera' type='camera'>
+          <pose>0 0 0.10000000000000001 0 0 0</pose>
+          <topic>camera/image_raw</topic>
+          <update_rate>20</update_rate>
+          <enable_metrics>false</enable_metrics>
+          <camera name='__default__'>
+            <pose>0 0 0 0 0 0</pose>
+            <horizontal_fov>1.5700000000000001</horizontal_fov>
+            <image>
+              <width>320</width>
+              <height>320</height>
+              <format>L_INT8</format>
+              <anti_aliasing>4</anti_aliasing>
+            </image>
+            <camera_info_topic>__default__</camera_info_topic>
+            <trigger_topic></trigger_topic>
+            <triggered>false</triggered>
+            <clip>
+              <near>0.050000000000000003</near>
+              <far>10</far>
+            </clip>
+            <save enabled='false'>
+              <path>__default__</path>
+            </save>
+            <visibility_mask>4294967295</visibility_mask>
+            <noise>
+              <type>none</type>
+              <mean>0</mean>
+              <stddev>0</stddev>
+            </noise>
+            <distortion>
+              <k1>-0.070365999999999998</k1>
+              <k2>-0.0064339999999999996</k2>
+              <k3>0</k3>
+              <p1>-0.0026909999999999998</p1>
+              <p2>-0.001983</p2>
+              <center>0.5 0.5</center>
+            </distortion>
+            <lens>
+              <type>stereographic</type>
+              <scale_to_hfov>true</scale_to_hfov>
+              <cutoff_angle>1.5707963267948966</cutoff_angle>
+              <env_texture_size>256</env_texture_size>
+            </lens>
+            <optical_frame_id></optical_frame_id>
+          </camera>
+        </sensor>
+        <sensor name='ai_deck_depth' type='depth_camera'>
+          <pose>0 0 0.10000000000000001 0 0 0</pose>
+          <topic>depth_camera/depth_image</topic>
+          <update_rate>20</update_rate>
+          <enable_metrics>false</enable_metrics>
+          <camera name='__default__'>
+            <pose>0 0 0 0 0 0</pose>
+            <horizontal_fov>1.5700000000000001</horizontal_fov>
+            <image>
+              <width>320</width>
+              <height>320</height>
+              <format>L_INT8</format>
+              <anti_aliasing>4</anti_aliasing>
+            </image>
+            <camera_info_topic>__default__</camera_info_topic>
+            <trigger_topic></trigger_topic>
+            <triggered>false</triggered>
+            <clip>
+              <near>0.050000000000000003</near>
+              <far>10</far>
+            </clip>
+            <save enabled='false'>
+              <path>__default__</path>
+            </save>
+            <visibility_mask>4294967295</visibility_mask>
+            <noise>
+              <type>none</type>
+              <mean>0</mean>
+              <stddev>0</stddev>
+            </noise>
+            <distortion>
+              <k1>-0.070365999999999998</k1>
+              <k2>-0.0064339999999999996</k2>
+              <k3>0</k3>
+              <p1>-0.0026909999999999998</p1>
+              <p2>-0.001983</p2>
+              <center>0.5 0.5</center>
+            </distortion>
+            <lens>
+              <type>stereographic</type>
+              <scale_to_hfov>true</scale_to_hfov>
+              <cutoff_angle>1.5707963267948966</cutoff_angle>
+              <env_texture_size>256</env_texture_size>
+            </lens>
+            <optical_frame_id></optical_frame_id>
+          </camera>
+        </sensor>
+        <enable_wind>false</enable_wind>
+      </link>
+      <link name='crazyflie/m1_prop'>
+        <pose>0.031 -0.031 0.020999999999999991 -1.4789715442499996e-39 -1.72134292134e-37 2.8148099999999994e-19</pose>
+        <inertial>
+          <mass>0.00080000000000000004</mass>
+          <inertia>
+            <ixx>8.3333300000000002e-09</ixx>
+            <iyy>1.0833299999999999e-07</iyy>
+            <izz>1.13333e-07</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+          <pose>0 0 0 0 0 0</pose>
+        </inertial>
+        <visual name='crazyflie/m1_visual'>
+          <geometry>
+            <mesh>
+              <uri>file:///root/Shared/crazyflie_mapping_demo/simulation_ws/crazyflie-simulation/meshes/collada_files/ccw_prop.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <enable_wind>false</enable_wind>
+      </link>
+      <link name='crazyflie/m2_prop'>
+        <pose>-0.031 -0.031 0.020999999999999991 -1.5814714532499987e-40 -1.72134292134e-37 3.0098900000000015e-20</pose>
+        <inertial>
+          <mass>0.00080000000000000004</mass>
+          <inertia>
+            <ixx>8.3333300000000002e-09</ixx>
+            <iyy>1.0833299999999999e-07</iyy>
+            <izz>1.13333e-07</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+          <pose>0 0 0 0 0 0</pose>
+        </inertial>
+        <visual name='crazyflie/m2_visual'>
+          <geometry>
+            <mesh>
+              <uri>file:///root/Shared/crazyflie_mapping_demo/simulation_ws/crazyflie-simulation/meshes/collada_files/cw_prop.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <enable_wind>false</enable_wind>
+      </link>
+      <link name='crazyflie/m3_prop'>
+        <pose>-0.031 0.031 0.020999999999999991 -4.2601984425000034e-40 -1.72134292134e-37 8.1081000000000027e-20</pose>
+        <inertial>
+          <mass>0.00080000000000000004</mass>
+          <inertia>
+            <ixx>8.3333300000000002e-09</ixx>
+            <iyy>1.0833299999999999e-07</iyy>
+            <izz>1.13333e-07</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+          <pose>0 0 0 0 0 0</pose>
+        </inertial>
+        <visual name='crazyflie/m3_visual'>
+          <geometry>
+            <mesh>
+              <uri>file:///root/Shared/crazyflie_mapping_demo/simulation_ws/crazyflie-simulation/meshes/collada_files/ccw_prop.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <enable_wind>false</enable_wind>
+      </link>
+      <link name='crazyflie/m4_prop'>
+        <pose>0.031 0.031 0.020999999999999991 -4.3201336722499984e-40 -1.72134292134e-37 8.2221699999999993e-20</pose>
+        <inertial>
+          <mass>0.00080000000000000004</mass>
+          <inertia>
+            <ixx>8.3333300000000002e-09</ixx>
+            <iyy>1.0833299999999999e-07</iyy>
+            <izz>1.13333e-07</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+          <pose>0 0 0 0 0 0</pose>
+        </inertial>
+        <visual name='crazyflie/m4_visual'>
+          <geometry>
+            <mesh>
+              <uri>file:///root/Shared/crazyflie_mapping_demo/simulation_ws/crazyflie-simulation/meshes/collada_files/cw_prop.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <enable_wind>false</enable_wind>
+      </link>
+      <joint name='crazyflie/m1_joint' type='revolute'>
+        <child>crazyflie/m1_prop</child>
+        <parent>crazyflie/body</parent>
+        <axis>
+          <xyz>4.1630357931351703e-58 0 1</xyz>
+          <limit>
+            <lower>-inf</lower>
+            <upper>inf</upper>
+            <effort>inf</effort>
+            <velocity>inf</velocity>
+            <stiffness>100000000</stiffness>
+            <dissipation>1</dissipation>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+            <damping>0</damping>
+            <friction>0</friction>
+          </dynamics>
+        </axis>
+        <pose>0 0 0 0 2.0815119462351701e-58 0</pose>
+      </joint>
+      <joint name='crazyflie/m2_joint' type='revolute'>
+        <child>crazyflie/m2_prop</child>
+        <parent>crazyflie/body</parent>
+        <axis>
+          <xyz>4.760067974811321e-60 0 1</xyz>
+          <limit>
+            <lower>-inf</lower>
+            <upper>inf</upper>
+            <effort>inf</effort>
+            <velocity>inf</velocity>
+            <stiffness>100000000</stiffness>
+            <dissipation>1</dissipation>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+            <damping>0</damping>
+            <friction>0</friction>
+          </dynamics>
+        </axis>
+        <pose>0 0 0 0 2.3800275562113204e-60 0</pose>
+      </joint>
+      <joint name='crazyflie/m3_joint' type='revolute'>
+        <child>crazyflie/m3_prop</child>
+        <parent>crazyflie/body</parent>
+        <axis>
+          <xyz>3.4542161846317145e-59 0 1</xyz>
+          <limit>
+            <lower>-inf</lower>
+            <upper>inf</upper>
+            <effort>inf</effort>
+            <velocity>inf</velocity>
+            <stiffness>100000000</stiffness>
+            <dissipation>1</dissipation>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+            <damping>0</damping>
+            <friction>0</friction>
+          </dynamics>
+        </axis>
+        <pose>0 0 0 0 1.7271057495817144e-59 0</pose>
+      </joint>
+      <joint name='crazyflie/m4_joint' type='revolute'>
+        <child>crazyflie/m4_prop</child>
+        <parent>crazyflie/body</parent>
+        <axis>
+          <xyz>3.5520940600731884e-59 0 1</xyz>
+          <limit>
+            <lower>-inf</lower>
+            <upper>inf</upper>
+            <effort>inf</effort>
+            <velocity>inf</velocity>
+            <stiffness>100000000</stiffness>
+            <dissipation>1</dissipation>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+            <damping>0</damping>
+            <friction>0</friction>
+          </dynamics>
+        </axis>
+        <pose>0 0 0 0 1.7760436737981883e-59 0</pose>
+      </joint>
+      <plugin name='gz::sim::systems::MulticopterMotorModel' filename='gz-sim-multicopter-motor-model-system'>
+        <robotNamespace>crazyflie</robotNamespace>
+        <jointName>crazyflie/m1_joint</jointName>
+        <linkName>crazyflie/m1_prop</linkName>
+        <turningDirection>ccw</turningDirection>
+        <maxRotVelocity>2618</maxRotVelocity>
+        <motorConstant>1.28192e-08</motorConstant>
+        <momentConstant>0.005964552</momentConstant>
+        <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+        <rollingMomentCoefficient>0.0000001</rollingMomentCoefficient>
+        <rotorVelocitySlowdownSim>20</rotorVelocitySlowdownSim>
+        <actuator_number>0</actuator_number>
+        <motorType>velocity</motorType>
+      </plugin>
+      <plugin name='gz::sim::systems::MulticopterMotorModel' filename='gz-sim-multicopter-motor-model-system'>
+        <robotNamespace>crazyflie</robotNamespace>
+        <jointName>crazyflie/m2_joint</jointName>
+        <linkName>crazyflie/m2_prop</linkName>
+        <turningDirection>cw</turningDirection>
+        <maxRotVelocity>2618</maxRotVelocity>
+        <motorConstant>1.28192e-08</motorConstant>
+        <momentConstant>0.005964552</momentConstant>
+        <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+        <rollingMomentCoefficient>0.0000001</rollingMomentCoefficient>
+        <rotorVelocitySlowdownSim>20</rotorVelocitySlowdownSim>
+        <actuator_number>1</actuator_number>
+        <motorType>velocity</motorType>
+      </plugin>
+      <plugin name='gz::sim::systems::MulticopterMotorModel' filename='gz-sim-multicopter-motor-model-system'>
+        <robotNamespace>crazyflie</robotNamespace>
+        <jointName>crazyflie/m3_joint</jointName>
+        <linkName>crazyflie/m3_prop</linkName>
+        <turningDirection>ccw</turningDirection>
+        <maxRotVelocity>2618</maxRotVelocity>
+        <motorConstant>1.28192e-08</motorConstant>
+        <momentConstant>0.005964552</momentConstant>
+        <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+        <rollingMomentCoefficient>0.0000001</rollingMomentCoefficient>
+        <rotorVelocitySlowdownSim>20</rotorVelocitySlowdownSim>
+        <actuator_number>2</actuator_number>
+        <motorType>velocity</motorType>
+      </plugin>
+      <plugin name='gz::sim::systems::MulticopterMotorModel' filename='gz-sim-multicopter-motor-model-system'>
+        <robotNamespace>crazyflie</robotNamespace>
+        <jointName>crazyflie/m4_joint</jointName>
+        <linkName>crazyflie/m4_prop</linkName>
+        <turningDirection>cw</turningDirection>
+        <maxRotVelocity>2618</maxRotVelocity>
+        <motorConstant>1.28192e-08</motorConstant>
+        <momentConstant>0.005964552</momentConstant>
+        <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+        <rollingMomentCoefficient>0.0000001</rollingMomentCoefficient>
+        <rotorVelocitySlowdownSim>20</rotorVelocitySlowdownSim>
+        <actuator_number>3</actuator_number>
+        <motorType>velocity</motorType>
+      </plugin>
+      <plugin name='gz::sim::systems::MulticopterVelocityControl' filename='gz-sim-multicopter-control-system'>
+        <robotNamespace>crazyflie</robotNamespace>
+        <commandSubTopic>gazebo/command/twist</commandSubTopic>
+        <enableSubTopic>enable</enableSubTopic>
+        <comLinkName>crazyflie/body</comLinkName>
+        <velocityGain>1.25 1.25 0.2425</velocityGain>
+        <attitudeGain>0.02 0.02 0.02</attitudeGain>
+        <angularRateGain>0.005 0.005 0.005</angularRateGain>
+        <rotorConfiguration>
+          <rotor>
+            <jointName>crazyflie/m1_joint</jointName>
+            <forceConstant>1.28192e-08</forceConstant>
+            <momentConstant>0.005964552</momentConstant>
+            <direction>1</direction>
+          </rotor>
+          <rotor>
+            <jointName>crazyflie/m2_joint</jointName>
+            <forceConstant>1.28192e-08</forceConstant>
+            <momentConstant>0.005964552</momentConstant>
+            <direction>-1</direction>
+          </rotor>
+          <rotor>
+            <jointName>crazyflie/m3_joint</jointName>
+            <forceConstant>1.28192e-08</forceConstant>
+            <momentConstant>0.005964552</momentConstant>
+            <direction>1</direction>
+          </rotor>
+          <rotor>
+            <jointName>crazyflie/m4_joint</jointName>
+            <forceConstant>1.28192e-08</forceConstant>
+            <momentConstant>0.005964552</momentConstant>
+            <direction>-1</direction>
+          </rotor>
+        </rotorConfiguration>
+      </plugin>
+      <plugin name='gz::sim::systems::OdometryPublisher' filename='gz-sim-odometry-publisher-system'>
+        <dimensions>3</dimensions>
+      </plugin>
+      <pose>-1.8169100000000001e-20 3.3891900000000001e-20 0.03979930000000001 -4.7658800000000001e-19 1.05085e-20 -7.2236099999999998e-19</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ShelfF_01_001'>
+      <model name='aws_robomaker_warehouse_ShelfF_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_shelff_01/4/meshes/aws_robomaker_warehouse_ShelfF_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.20000000000000001</mu>
+                  <mu2>0.20000000000000001</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_shelff_01/4/meshes/aws_robomaker_warehouse_ShelfF_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>-5.7951430000000004 -0.95663500000000001 0 0 0 0</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_WallB_01_001'>
+      <model name='aws_robomaker_warehouse_WallB_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_wallb_01/4/meshes/aws_robomaker_warehouse_WallB_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.5</mu>
+                  <mu2>0.5</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_wallb_01/4/meshes/aws_robomaker_warehouse_WallB_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>2</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>0 0 0 0 0 0</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ShelfE_01_001'>
+      <model name='aws_robomaker_warehouse_ShelfE_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_shelfe_01/4/meshes/aws_robomaker_warehouse_ShelfE_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.20000000000000001</mu>
+                  <mu2>0.20000000000000001</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_shelfe_01/4/meshes/aws_robomaker_warehouse_ShelfE_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>4.73156 0.57943 0 0 0 0</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ShelfE_01_002'>
+      <model name='aws_robomaker_warehouse_ShelfE_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_shelfe_01/4/meshes/aws_robomaker_warehouse_ShelfE_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.20000000000000001</mu>
+                  <mu2>0.20000000000000001</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_shelfe_01/4/meshes/aws_robomaker_warehouse_ShelfE_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>4.73156 -4.8270489999999997 0 0 0 0</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ShelfE_01_003'>
+      <model name='aws_robomaker_warehouse_ShelfE_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_shelfe_01/4/meshes/aws_robomaker_warehouse_ShelfE_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.20000000000000001</mu>
+                  <mu2>0.20000000000000001</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_shelfe_01/4/meshes/aws_robomaker_warehouse_ShelfE_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>4.73156 -8.6651000000000007 0 0 0 0</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ShelfD_01_001'>
+      <model name='aws_robomaker_warehouse_ShelfD_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_shelfd_01/4/meshes/aws_robomaker_warehouse_ShelfD_01_collision.DAE</uri>
+                <scale>1 1 1</scale>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.20000000000000001</mu>
+                  <mu2>0.20000000000000001</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_shelfd_01/4/meshes/aws_robomaker_warehouse_ShelfD_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>4.73156 -1.2426680000000001 0 0 0 0</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ShelfD_01_002'>
+      <model name='aws_robomaker_warehouse_ShelfD_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_shelfd_01/4/meshes/aws_robomaker_warehouse_ShelfD_01_collision.DAE</uri>
+                <scale>1 1 1</scale>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.20000000000000001</mu>
+                  <mu2>0.20000000000000001</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_shelfd_01/4/meshes/aws_robomaker_warehouse_ShelfD_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>4.73156 -3.038551 0 0 0 0</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ShelfD_01_003'>
+      <model name='aws_robomaker_warehouse_ShelfD_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_shelfd_01/4/meshes/aws_robomaker_warehouse_ShelfD_01_collision.DAE</uri>
+                <scale>1 1 1</scale>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.20000000000000001</mu>
+                  <mu2>0.20000000000000001</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_shelfd_01/4/meshes/aws_robomaker_warehouse_ShelfD_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>4.73156 -6.7505420000000003 0 0 0 0</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_GroundB_01_001'>
+      <model name='aws_robomaker_warehouse_GroundB_01'>
+        <link name='ground_link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_groundb_01/4/meshes/aws_robomaker_warehouse_GroundB_01_collision.DAE</uri>
+                <scale>1 1 1</scale>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.29999999999999999</mu>
+                  <mu2>0.29999999999999999</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_groundb_01/4/meshes/aws_robomaker_warehouse_GroundB_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>0 0 -0.090092000000000005 0 0 0</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_Lamp_01_005'>
+      <model name='aws_robomaker_warehouse_Lamp_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_lamp_01/4/meshes/aws_robomaker_warehouse_Lamp_01_collision.DAE</uri>
+                <scale>1 1 1</scale>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.20000000000000001</mu>
+                  <mu2>0.20000000000000001</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_lamp_01/4/meshes/aws_robomaker_warehouse_Lamp_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>0 0 -4 0 0 0</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_Bucket_01_020'>
+      <model name='aws_robomaker_warehouse_Bucket_01'>
+        <link name='body'>
+          <pose>0 0 0 0 0 0</pose>
+          <self_collide>false</self_collide>
+          <kinematic>false</kinematic>
+          <gravity>true</gravity>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_bucket_01/3/meshes/aws_robomaker_warehouse_Bucket_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+          <collision name='collision_0'>
+            <laser_retro>0</laser_retro>
+            <max_contacts>10</max_contacts>
+            <pose>0 0 0 0 0 0</pose>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_bucket_01/3/meshes/aws_robomaker_warehouse_Bucket_01_collision.DAE</uri>
+                <scale>1 1 1</scale>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.40000000000000002</mu>
+                  <mu2>0.40000000000000002</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+                <torsional>
+                  <coefficient>1</coefficient>
+                  <patch_radius>0</patch_radius>
+                  <surface_radius>0</surface_radius>
+                  <use_patch_radius>true</use_patch_radius>
+                  <ode>
+                    <slip>0</slip>
+                  </ode>
+                </torsional>
+              </friction>
+            </surface>
+          </collision>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>0.43344899999999997 9.6317059999999994 0 0 0 -1.5631610000000002</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_Bucket_01_021'>
+      <model name='aws_robomaker_warehouse_Bucket_01'>
+        <link name='body'>
+          <pose>0 0 0 0 0 0</pose>
+          <self_collide>false</self_collide>
+          <kinematic>false</kinematic>
+          <gravity>true</gravity>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_bucket_01/3/meshes/aws_robomaker_warehouse_Bucket_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+          <collision name='collision_0'>
+            <laser_retro>0</laser_retro>
+            <max_contacts>10</max_contacts>
+            <pose>0 0 0 0 0 0</pose>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_bucket_01/3/meshes/aws_robomaker_warehouse_Bucket_01_collision.DAE</uri>
+                <scale>1 1 1</scale>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.40000000000000002</mu>
+                  <mu2>0.40000000000000002</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+                <torsional>
+                  <coefficient>1</coefficient>
+                  <patch_radius>0</patch_radius>
+                  <surface_radius>0</surface_radius>
+                  <use_patch_radius>true</use_patch_radius>
+                  <ode>
+                    <slip>0</slip>
+                  </ode>
+                </torsional>
+              </friction>
+            </surface>
+          </collision>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>-1.8321000000000001 -6.3752000000000004 0 0 0 -1.5631610000000002</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_Bucket_01_022'>
+      <model name='aws_robomaker_warehouse_Bucket_01'>
+        <link name='body'>
+          <pose>0 0 0 0 0 0</pose>
+          <self_collide>false</self_collide>
+          <kinematic>false</kinematic>
+          <gravity>true</gravity>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_bucket_01/3/meshes/aws_robomaker_warehouse_Bucket_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+          <collision name='collision_0'>
+            <laser_retro>0</laser_retro>
+            <max_contacts>10</max_contacts>
+            <pose>0 0 0 0 0 0</pose>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_bucket_01/3/meshes/aws_robomaker_warehouse_Bucket_01_collision.DAE</uri>
+                <scale>1 1 1</scale>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.40000000000000002</mu>
+                  <mu2>0.40000000000000002</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+                <torsional>
+                  <coefficient>1</coefficient>
+                  <patch_radius>0</patch_radius>
+                  <surface_radius>0</surface_radius>
+                  <use_patch_radius>true</use_patch_radius>
+                  <ode>
+                    <slip>0</slip>
+                  </ode>
+                </torsional>
+              </friction>
+            </surface>
+          </collision>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>0.43344899999999997 8.5899999999999999 0 0 0 -1.5631610000000002</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ClutteringA_01_016'>
+      <model name='aws_robomaker_warehouse_ClutteringA_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringa_01/4/meshes/aws_robomaker_warehouse_ClutteringA_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.59999999999999998</mu>
+                  <mu2>0.59999999999999998</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+                <torsional>
+                  <coefficient>1</coefficient>
+                  <patch_radius>0</patch_radius>
+                  <surface_radius>0</surface_radius>
+                  <use_patch_radius>true</use_patch_radius>
+                  <ode>
+                    <slip>0</slip>
+                  </ode>
+                </torsional>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringa_01/4/meshes/aws_robomaker_warehouse_ClutteringA_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>5.7081379999999999 8.6168440000000004 -0.017476999999999999 0 0 0</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ClutteringA_01_017'>
+      <model name='aws_robomaker_warehouse_ClutteringA_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringa_01/4/meshes/aws_robomaker_warehouse_ClutteringA_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.59999999999999998</mu>
+                  <mu2>0.59999999999999998</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+                <torsional>
+                  <coefficient>1</coefficient>
+                  <patch_radius>0</patch_radius>
+                  <surface_radius>0</surface_radius>
+                  <use_patch_radius>true</use_patch_radius>
+                  <ode>
+                    <slip>0</slip>
+                  </ode>
+                </torsional>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringa_01/4/meshes/aws_robomaker_warehouse_ClutteringA_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>3.4086379999999998 8.6168440000000004 -0.017476999999999999 0 0 0</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ClutteringA_01_018'>
+      <model name='aws_robomaker_warehouse_ClutteringA_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringa_01/4/meshes/aws_robomaker_warehouse_ClutteringA_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.59999999999999998</mu>
+                  <mu2>0.59999999999999998</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+                <torsional>
+                  <coefficient>1</coefficient>
+                  <patch_radius>0</patch_radius>
+                  <surface_radius>0</surface_radius>
+                  <use_patch_radius>true</use_patch_radius>
+                  <ode>
+                    <slip>0</slip>
+                  </ode>
+                </torsional>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringa_01/4/meshes/aws_robomaker_warehouse_ClutteringA_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>-1.491287 5.2224349999999999 -0.017476999999999999 0 0 -1.5831850000000003</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ClutteringC_01_027'>
+      <model name='aws_robomaker_warehouse_ClutteringC_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringc_01/4/meshes/aws_robomaker_warehouse_ClutteringC_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.59999999999999998</mu>
+                  <mu2>0.59999999999999998</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+                <torsional>
+                  <coefficient>1</coefficient>
+                  <patch_radius>0</patch_radius>
+                  <surface_radius>0</surface_radius>
+                  <use_patch_radius>true</use_patch_radius>
+                  <ode>
+                    <slip>0</slip>
+                  </ode>
+                </torsional>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringc_01/4/meshes/aws_robomaker_warehouse_ClutteringC_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>3.3249590000000002 3.8224490000000002 -0.012064 0 0 1.5638710000000007</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ClutteringC_01_028'>
+      <model name='aws_robomaker_warehouse_ClutteringC_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringc_01/4/meshes/aws_robomaker_warehouse_ClutteringC_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.59999999999999998</mu>
+                  <mu2>0.59999999999999998</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+                <torsional>
+                  <coefficient>1</coefficient>
+                  <patch_radius>0</patch_radius>
+                  <surface_radius>0</surface_radius>
+                  <use_patch_radius>true</use_patch_radius>
+                  <ode>
+                    <slip>0</slip>
+                  </ode>
+                </torsional>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringc_01/4/meshes/aws_robomaker_warehouse_ClutteringC_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>5.5417100000000001 3.8164750000000001 -0.015663 0 0 -1.5831909999999998</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ClutteringC_01_029'>
+      <model name='aws_robomaker_warehouse_ClutteringC_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringc_01/4/meshes/aws_robomaker_warehouse_ClutteringC_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.59999999999999998</mu>
+                  <mu2>0.59999999999999998</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+                <torsional>
+                  <coefficient>1</coefficient>
+                  <patch_radius>0</patch_radius>
+                  <surface_radius>0</surface_radius>
+                  <use_patch_radius>true</use_patch_radius>
+                  <ode>
+                    <slip>0</slip>
+                  </ode>
+                </torsional>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringc_01/4/meshes/aws_robomaker_warehouse_ClutteringC_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>5.384239 6.1371539999999998 0 0 0 -3.1331853071795868</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ClutteringC_01_030'>
+      <model name='aws_robomaker_warehouse_ClutteringC_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringc_01/4/meshes/aws_robomaker_warehouse_ClutteringC_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.59999999999999998</mu>
+                  <mu2>0.59999999999999998</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+                <torsional>
+                  <coefficient>1</coefficient>
+                  <patch_radius>0</patch_radius>
+                  <surface_radius>0</surface_radius>
+                  <use_patch_radius>true</use_patch_radius>
+                  <ode>
+                    <slip>0</slip>
+                  </ode>
+                </torsional>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringc_01/4/meshes/aws_robomaker_warehouse_ClutteringC_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>3.2360000000000002 6.1371539999999998 0 0 0 -3.1331853071795868</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ClutteringC_01_031'>
+      <model name='aws_robomaker_warehouse_ClutteringC_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringc_01/4/meshes/aws_robomaker_warehouse_ClutteringC_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.59999999999999998</mu>
+                  <mu2>0.59999999999999998</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+                <torsional>
+                  <coefficient>1</coefficient>
+                  <patch_radius>0</patch_radius>
+                  <surface_radius>0</surface_radius>
+                  <use_patch_radius>true</use_patch_radius>
+                  <ode>
+                    <slip>0</slip>
+                  </ode>
+                </torsional>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringc_01/4/meshes/aws_robomaker_warehouse_ClutteringC_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>-1.573677 2.3019940000000001 -0.015663 0 0 -3.1331910000000001</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ClutteringC_01_032'>
+      <model name='aws_robomaker_warehouse_ClutteringC_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringc_01/4/meshes/aws_robomaker_warehouse_ClutteringC_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.59999999999999998</mu>
+                  <mu2>0.59999999999999998</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+                <torsional>
+                  <coefficient>1</coefficient>
+                  <patch_radius>0</patch_radius>
+                  <surface_radius>0</surface_radius>
+                  <use_patch_radius>true</use_patch_radius>
+                  <ode>
+                    <slip>0</slip>
+                  </ode>
+                </torsional>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringc_01/4/meshes/aws_robomaker_warehouse_ClutteringC_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>-1.2196 9.407 -0.015663 0 0 1.5638710000000007</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_ClutteringD_01_005'>
+      <model name='aws_robomaker_warehouse_ClutteringD_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringd_01/4/meshes/aws_robomaker_warehouse_ClutteringD_01_collision.DAE</uri>
+                <scale>1 1 1</scale>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.59999999999999998</mu>
+                  <mu2>0.59999999999999998</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+                <torsional>
+                  <coefficient>1</coefficient>
+                  <patch_radius>0</patch_radius>
+                  <surface_radius>0</surface_radius>
+                  <use_patch_radius>true</use_patch_radius>
+                  <ode>
+                    <slip>0</slip>
+                  </ode>
+                </torsional>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_clutteringd_01/4/meshes/aws_robomaker_warehouse_ClutteringD_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>-1.634682 -7.8118129999999999 -0.31955899999999998 0 0 0</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_TrashCanC_01_002'>
+      <model name='aws_robomaker_warehouse_TrashCanC_01'>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_trashcanc_01/4/meshes/aws_robomaker_warehouse_TrashCanC_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.40000000000000002</mu>
+                  <mu2>0.40000000000000002</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_trashcanc_01/4/meshes/aws_robomaker_warehouse_TrashCanC_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+        <static>true</static>
+      </model>
+      <pose>-1.592441 7.7154199999999999 0 0 0 0</pose>
+      <static>false</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='aws_robomaker_warehouse_PalletJackB_01_001'>
+      <model name='aws_robomaker_warehouse_PalletJackB_01'>
+        <link name='link'>
+          <inertial>
+            <mass>2</mass>
+            <inertia>
+              <ixx>0.27700000000000002</ixx>
+              <ixy>0</ixy>
+              <ixz>0</ixz>
+              <iyy>0.45200000000000001</iyy>
+              <iyz>0</iyz>
+              <izz>0.26800000000000002</izz>
+            </inertia>
+          </inertial>
+          <collision name='collision'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_palletjackb_01/4/meshes/aws_robomaker_warehouse_PalletJackB_01_collision.DAE</uri>
+              </mesh>
+            </geometry>
+            <surface>
+              <friction>
+                <ode>
+                  <mu>0.20000000000000001</mu>
+                  <mu2>0.20000000000000001</mu2>
+                  <fdir1>0 0 0</fdir1>
+                  <slip1>0</slip1>
+                  <slip2>0</slip2>
+                </ode>
+              </friction>
+            </surface>
+          </collision>
+          <visual name='visual'>
+            <geometry>
+              <mesh>
+                <uri>file:///root/.gz/fuel/fuel.gazebosim.org/openrobotics/models/aws_robomaker_warehouse_palletjackb_01/4/meshes/aws_robomaker_warehouse_PalletJackB_01_visual.DAE</uri>
+              </mesh>
+            </geometry>
+            <meta>
+              <layer>1</layer>
+            </meta>
+          </visual>
+        </link>
+      </model>
+      <pose>-0.27609800000000001 -9.4819440000000004 0.023265999999999998 0 0 0</pose>
+      <static>true</static>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='box'>
+      <pose>0 0 9.5 0 0 0</pose>
+      <link name='box_link'>
+        <inertial>
+          <inertia>
+            <ixx>0.16666</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.16666</iyy>
+            <iyz>0</iyz>
+            <izz>0.16666</izz>
+          </inertia>
+          <mass>1</mass>
+          <pose>0 0 0 0 0 0</pose>
+        </inertial>
+        <collision name='box_collision'>
+          <geometry>
+            <box>
+              <size>14 22 0.1</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <visual name='box_visual'>
+          <geometry>
+            <box>
+              <size>14 22 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 0.0 0.0 1</ambient>
+            <diffuse>0.0 0.0 0.0 1</diffuse>
+            <specular>1 1 1 1</specular>
+          </material>
+        </visual>
+        <pose>0 0 0 0 0 0</pose>
+        <enable_wind>false</enable_wind>
+      </link>
+      <static>true</static>
+      <self_collide>false</self_collide>
+    </model>
+    <light name='Warehouse_CeilingLight_003' type='point'>
+      <pose>0 0 8.5 0 0 0</pose>
+      <cast_shadows>true</cast_shadows>
+      <intensity>1</intensity>
+      <direction>0 0 -1</direction>
+      <diffuse>0.5 0.5 0.5 1</diffuse>
+      <specular>0.200000003 0.200000003 0.200000003 1</specular>
+      <attenuation>
+        <range>80</range>
+        <linear>0.01</linear>
+        <constant>0.29999999999999999</constant>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <spot>
+        <inner_angle>0</inner_angle>
+        <outer_angle>0</outer_angle>
+        <falloff>0</falloff>
+      </spot>
+    </light>
+  </world>
+</sdf>
