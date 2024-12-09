@@ -1,64 +1,89 @@
+
+import sys
+from pathlib import Path
 import torch
 import torchmetrics
 import matplotlib.pyplot as plt
-from neural_network_model.models.unet_with_attention import UNetWithAttention
-from neural_network_model.datasets.dataset import DepthDataset
-from torch.utils.data import DataLoader
-from pathlib import Path
-import albumentations as A
-import albumentations.pytorch.transforms
+from datasets.datamodule import DepthDataModule
+from models.unet_with_attention import UNetWithAttention
 
-def main():
-    model_path = "logs/depth_estimation/version_2/checkpoints/epoch=14-step=750.ckpt"
-    trained_model = UNetWithAttention.load_from_checkpoint(model_path)
-    trained_model = trained_model.cuda()
-    trained_model.eval()
+project_dir = Path(__file__).resolve().parent
+sys.path.append(str(project_dir / "neural_network_model"))
 
-    ROOT_DIR = Path(__file__).resolve().parent
-    camera_dir = ROOT_DIR.parent / "crazyflie_images" / "camera"
-    camera_files = sorted(camera_dir.glob("*.png"))
+def visualize_prediction(camera_image, true_depth, predicted_depth):
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
 
-    transforms = A.Compose([
-        A.Resize(width=256, height=256),
-        A.Normalize(mean=(0.5,), std=(0.5,)),
-        A.pytorch.transforms.ToTensorV2(transpose_mask=True),
-    ])
+    axes[0].imshow(camera_image, cmap='gray')
+    axes[0].set_title('Camera Image')
+    axes[0].axis('off')
 
-    test_dataset = DepthDataset(camera_files, transforms=transforms)
+    axes[1].imshow(true_depth, cmap='gray')
+    axes[1].set_title('True Depth')
+    axes[1].axis('off')
 
-    test_loader = DataLoader(test_dataset, batch_size=8, shuffle=True, num_workers=4, persistent_workers=True)
+    axes[2].imshow(predicted_depth, cmap='gray')
+    axes[2].set_title('Predicted Depth')
+    axes[2].axis('off')
+
+    plt.show()
+
+
+def test_model(model_path, image_dir, batch_size=32):
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    print(f"Using device: {device}")
+
+    model = UNetWithAttention.load_from_checkpoint(model_path)
+    model = model.to(device)
+    model.eval()
+    data_module = DepthDataModule(
+        image_dir=image_dir,
+        batch_size=batch_size,
+        target_size=(256, 256)
+    )
+    data_module.setup(stage='test')
+
+    test_loader = data_module.test_dataloader()
+
+    # Inicjalizacja metryk
+    rmse_metric = torchmetrics.MeanSquaredError(squared=False).to(device)
+    mae_metric = torchmetrics.MeanAbsoluteError().to(device)
 
     with torch.no_grad():
         for idx, (camera_images, depth_images) in enumerate(test_loader):
-            camera_images = camera_images.cuda()
-            preds = trained_model(camera_images).cpu()
-            preds = preds.squeeze().numpy()
-            camera_images = camera_images.cpu().squeeze().numpy()
-            depth_images = depth_images.squeeze().numpy()
-
-            # Plot Results
-            for i in range(camera_images.shape[0]):
-                plt.figure(figsize=(15, 5))
-
-                plt.subplot(1, 3, 1)
-                plt.title("Camera Image")
-                plt.imshow(camera_images[i], cmap="gray")
-                plt.axis("off")
-
-                plt.subplot(1, 3, 2)
-                plt.title("True Depth")
-                plt.imshow(depth_images[i], cmap="gray")
-                plt.axis("off")
-
-                plt.subplot(1, 3, 3)
-                plt.title("Predicted Depth")
-                plt.imshow(preds[i], cmap="gray")
-                plt.axis("off")
-
-                plt.show()
+            camera_images = camera_images.to(device)
+            depth_images = depth_images.to(device)
+            preds = model(camera_images)
+            rmse = rmse_metric(preds, depth_images)
+            mae = mae_metric(preds, depth_images)
+            preds_np = preds.cpu().squeeze().numpy()
+            camera_images_np = camera_images.cpu().squeeze().numpy()
+            depth_images_np = depth_images.cpu().squeeze().numpy()
+            for i in range(camera_images_np.shape[0]):
+                camera_img = camera_images_np[i]
+                true_depth = depth_images_np[i]
+                predicted_depth = preds_np[i]
+                visualize_prediction(camera_img, true_depth, predicted_depth)
+            print(f"Batch {idx + 1}: RMSE={rmse.item():.4f}, MAE={mae.item():.4f}")
 
             if idx >= 4:
                 break
 
-if __name__ == '__main__':
+def main():
+    image_dir = r"C:\Users\kubac\Documents\GitHub\gra\CrazyFlie-With-Depth-Image-Model\crazyflie_images"
+    model_path = r"C:\Users\kubac\Documents\GitHub\gra\CrazyFlie-With-Depth-Image-Model\checkpoints\best-checkpoint.ckpt"
+
+    batch_size = 16
+
+    test_model(
+        model_path=model_path,
+        image_dir=image_dir,
+        batch_size=batch_size
+    )
+
+
+if __name__ == "__main__":
     main()
+
+
+
+

@@ -1,3 +1,4 @@
+
 import torch
 import numpy as np
 import albumentations as A
@@ -14,21 +15,29 @@ class DepthDataset(Dataset):
         return len(self.image_paths)
 
     def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
+
         image_path = self.image_paths[index]
         image = np.asarray(Image.open(image_path).convert('L'))
-
-        # Change the first character of the filename from 'c' to 'd'
         depth_filename = 'd' + image_path.name[1:]
-
         depth_path = image_path.parent.parent / 'depth_camera' / depth_filename
+
+
+        if not depth_path.exists():
+            raise FileNotFoundError(f"Depth map not found for image: {image_path}")
+
         depth = np.asarray(Image.open(depth_path).convert('L'))
-
         transformed = self.transforms(image=image, mask=depth)
-        image = transformed['image']  # Shape: [C, H, W]
-        depth = transformed['mask']   # Shape: [H, W]
+        image = transformed['image']  # [H, W]
+        depth = transformed['mask']   # [H, W]
 
-        # Ensure depth has a channel dimension
-        if depth.ndim == 2:
-            depth = depth.unsqueeze(0)  # Now depth shape is [1, H, W]
+        # Normalizacja i konwersja do tensora
+        image = torch.tensor(image, dtype=torch.float32) / 255.0
+        depth = torch.tensor(depth, dtype=torch.float32) / 255.0
+        image = image.unsqueeze(0)
+        depth = depth.unsqueeze(0)
 
-        return image, depth.float()
+        return image, depth
+
+
+
+
