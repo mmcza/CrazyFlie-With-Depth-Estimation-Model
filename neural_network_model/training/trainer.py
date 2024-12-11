@@ -5,16 +5,16 @@ from pytorch_lightning.loggers import TensorBoardLogger
 from neural_network_model.datasets.datamodule import DepthDataModule
 from neural_network_model.models.unet_with_attention import UNetWithAttention
 
-def train_model(camera_dir, batch_size=8, max_epochs=25, lr=1e-4):
+def train_model(camera_dir, batch_size=8, max_epochs=50, lr=1e-4):
 
     if torch.cuda.is_available():
         accelerator = "gpu"
         devices = 1
-        precision = '16-mixed'  # Mixed precision on GPU
+        precision = '16-mixed'
     else:
         accelerator = "cpu"
         devices = 1
-        precision = 32  # Full precision on CPU
+        precision = 32
 
     data_module = DepthDataModule(image_dir=camera_dir, batch_size=batch_size, target_size=(256, 256))
     model = UNetWithAttention(input_channels=1, learning_rate=lr, attention_type='cbam')
@@ -34,4 +34,6 @@ def train_model(camera_dir, batch_size=8, max_epochs=25, lr=1e-4):
     )
 
     trainer.fit(model, data_module)
-    trainer.save_checkpoint("unet_model2.ckpt", weights_only=True)
+    trainer.save_checkpoint("unet_model3.ckpt", weights_only=True)
+
+

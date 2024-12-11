@@ -1,4 +1,3 @@
-
 import sys
 from pathlib import Path
 import torch
@@ -44,17 +43,11 @@ def test_model(model_path, image_dir, batch_size=32):
 
     test_loader = data_module.test_dataloader()
 
-    # Inicjalizacja metryk
-    rmse_metric = torchmetrics.MeanSquaredError(squared=False).to(device)
-    mae_metric = torchmetrics.MeanAbsoluteError().to(device)
-
     with torch.no_grad():
         for idx, (camera_images, depth_images) in enumerate(test_loader):
             camera_images = camera_images.to(device)
             depth_images = depth_images.to(device)
             preds = model(camera_images)
-            rmse = rmse_metric(preds, depth_images)
-            mae = mae_metric(preds, depth_images)
             preds_np = preds.cpu().squeeze().numpy()
             camera_images_np = camera_images.cpu().squeeze().numpy()
             depth_images_np = depth_images.cpu().squeeze().numpy()
@@ -63,8 +56,6 @@ def test_model(model_path, image_dir, batch_size=32):
                 true_depth = depth_images_np[i]
                 predicted_depth = preds_np[i]
                 visualize_prediction(camera_img, true_depth, predicted_depth)
-            print(f"Batch {idx + 1}: RMSE={rmse.item():.4f}, MAE={mae.item():.4f}")
-
             if idx >= 4:
                 break
 
@@ -83,6 +74,10 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
 
 
 

@@ -1,4 +1,3 @@
-
 import pytorch_lightning as pl
 from torch.utils.data import DataLoader, ConcatDataset
 from sklearn.model_selection import train_test_split
@@ -8,21 +7,20 @@ from .dataset import DepthDataset
 
 
 class DepthDataModule(pl.LightningDataModule):
-    def __init__(self, image_dir: str, batch_size: int = 16, num_workers: int = 4, target_size=(256, 256)):
+    def __init__(self, image_dir: str, batch_size: int = 16, num_workers: int = 1, target_size=(256, 256)):
         super().__init__()
         self.image_dir = Path(image_dir)
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.target_size = target_size
 
-        # Transformacje z augmentacjami dla zestawu treningowego
+        #augmentation
         self.augmentations = A.Compose([
             A.Resize(height=target_size[0], width=target_size[1]),
             A.HorizontalFlip(p=0.1),
-            A.RandomBrightnessContrast(p=0.1),
             A.Normalize(mean=(0.5,), std=(0.5,)),
         ])
-        #bez augmentacji
+        #no augmentation
         self.transforms = A.Compose([
             A.Resize(height=target_size[0], width=target_size[1]),
             A.Normalize(mean=(0.5,), std=(0.5,)),
@@ -90,6 +88,10 @@ class DepthDataModule(pl.LightningDataModule):
             shuffle=False,
             persistent_workers=True
         )
+
+
+
+
 
 
 

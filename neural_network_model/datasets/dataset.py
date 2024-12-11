@@ -1,4 +1,3 @@
-
 import torch
 import numpy as np
 import albumentations as A
@@ -29,14 +28,15 @@ class DepthDataset(Dataset):
         transformed = self.transforms(image=image, mask=depth)
         image = transformed['image']  # [H, W]
         depth = transformed['mask']   # [H, W]
-
-        # Normalizacja i konwersja do tensora
         image = torch.tensor(image, dtype=torch.float32) / 255.0
         depth = torch.tensor(depth, dtype=torch.float32) / 255.0
         image = image.unsqueeze(0)
         depth = depth.unsqueeze(0)
 
         return image, depth
+
+
+
 
 
 
