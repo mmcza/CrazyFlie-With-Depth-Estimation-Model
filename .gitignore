@@ -57,3 +57,4 @@ crazyflie_mapping_demo/ros2_ws/log
 crazyflie_mapping_demo/ros2_ws/saved_image.png
 /.idea
 neural_network_model/unet_model.ckpt
+neural_network_model/unet_model3.ckpt

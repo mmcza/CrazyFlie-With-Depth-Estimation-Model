@@ -1,13 +1,9 @@
-import sys
 from pathlib import Path
 import torch
 import torchmetrics
 import matplotlib.pyplot as plt
 from datasets.datamodule import DepthDataModule
 from models.unet_with_attention import UNetWithAttention
-
-project_dir = Path(__file__).resolve().parent
-sys.path.append(str(project_dir / "neural_network_model"))
 
 def visualize_prediction(camera_image, true_depth, predicted_depth):
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
@@ -60,8 +56,9 @@ def test_model(model_path, image_dir, batch_size=32):
                 break
 
 def main():
-    image_dir = r"C:\Users\kubac\Documents\GitHub\gra\CrazyFlie-With-Depth-Image-Model\crazyflie_images"
-    model_path = r"C:\Users\kubac\Documents\GitHub\gra\CrazyFlie-With-Depth-Image-Model\checkpoints\best-checkpoint.ckpt"
+    proj_dir = Path(__file__).resolve().parent.parent
+    image_dir = proj_dir / "crazyflie_images"
+    model_path = proj_dir / "neural_network_model" / "unet_model3.ckpt"
 
     batch_size = 16
 
