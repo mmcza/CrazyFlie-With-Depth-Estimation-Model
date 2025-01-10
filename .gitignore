@@ -58,3 +58,6 @@ crazyflie_mapping_demo/ros2_ws/saved_image.png
 /.idea
 neural_network_model/unet_model.ckpt
 neural_network_model/unet_model3.ckpt
+/neural_network_model/lightning_logs
+/neural_network_model/checkpoints
+/neural_network_model/evaluation_outputs

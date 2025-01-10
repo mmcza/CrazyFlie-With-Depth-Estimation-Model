@@ -1,5 +1,6 @@
 # CrazyFlie With Depth Image Model
 
+python evaluate.py --checkpoint checkpoints/depth-estimation-55-0.051.ckpt --input_dir evaluations_input --output_dir evaluations_output --target_size 256 256
 
 
 ## Downloading the repository
