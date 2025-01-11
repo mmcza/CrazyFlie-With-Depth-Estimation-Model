@@ -1,31 +1,27 @@
-
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import pytorch_lightning as pl
-from torchvision import models
 import torchmetrics
+import timm
 
 
 class DepthMetrics(nn.Module):
     def __init__(self):
-        super(DepthMetrics, self).__init__()
+        super().__init__()
         self.rmse = torchmetrics.MeanSquaredError(squared=False)
-        self.mae = torchmetrics.MeanAbsoluteError()
+        self.mae  = torchmetrics.MeanAbsoluteError()
 
     def forward(self, preds, targets):
-
         preds = preds.to(targets.device)
-
-
         rmse = self.rmse(preds, targets)
-        mae = self.mae(preds, targets)
+        mae  = self.mae(preds, targets)
 
-        # Obliczenie δ1, δ2, δ3
         eps = 1e-6
-        ratio = torch.max(preds / (targets + eps), targets / (preds + eps))
+        ratio  = torch.max(preds / (targets + eps), targets / (preds + eps))
         delta1 = (ratio < 1.25).float().mean()
-        delta2 = (ratio < 1.25 ** 2).float().mean()
-        delta3 = (ratio < 1.25 ** 3).float().mean()
+        delta2 = (ratio < 1.25**2).float().mean()
+        delta3 = (ratio < 1.25**3).float().mean()
 
         return {
             'rmse': rmse,
@@ -36,122 +32,104 @@ class DepthMetrics(nn.Module):
         }
 
 
-class DepthEstimationUNetResNet50(pl.LightningModule):
-    def __init__(
-            self,
-            learning_rate=1e-4,
-            encoder_name='resnet50',
-            encoder_weights='imagenet',
-            freeze_encoder=False,
-            target_size=(256, 256)
-    ):
-        super(DepthEstimationUNetResNet50, self).__init__()
+class ReassembleLayer(nn.Module):
+    def __init__(self, embed_dim, out_channels, scale_type='x2'):
+        super().__init__()
+        self.project = nn.Conv2d(embed_dim, out_channels, kernel_size=1)
+        if scale_type == 'x2':
+            self.up = nn.ConvTranspose2d(out_channels, out_channels, kernel_size=2, stride=2)
+        elif scale_type == 'x4':
+            self.up = nn.ConvTranspose2d(out_channels, out_channels, kernel_size=4, stride=4)
+        else:
+            self.up = nn.Identity()
+
+    def forward(self, x):
+        B, N, D = x.shape
+        h = w = int(N**0.5)
+        x = x.permute(0, 2, 1).reshape(B, D, h, w)  # [B, D, h, w]
+
+        x = self.project(x)
+        x = self.up(x)
+        return x
+
+
+class FusionBlock(nn.Module):
+    def __init__(self, in_channels):
+        super().__init__()
+        self.upsample = nn.ConvTranspose2d(
+            in_channels, in_channels, kernel_size=2, stride=2
+        )
+
+    def forward(self, x, skip):
+        x = x + skip
+        x = self.upsample(x)
+        return x
+
+
+class DepthEstimationDPT(pl.LightningModule):
+    def __init__(self, learning_rate=1e-4, target_size=(224, 224), vit_name='vit_base_patch16_224'):
+        super().__init__()
         self.save_hyperparameters()
+
         self.target_size = target_size
         self.learning_rate = learning_rate
 
 
-        resnet = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1)
-        if freeze_encoder:
-            for param in resnet.parameters():
-                param.requires_grad = False
-
-        # Enkoder
-        self.initial = nn.Sequential(
-            resnet.conv1,  # [B, 64, H/2, W/2]
-            resnet.bn1,
-            resnet.relu,
-            resnet.maxpool  # [B, 64, H/4, W/4]
-        )
-        self.encoder1 = resnet.layer1  # [B, 256, H/4, W/4]
-        self.encoder2 = resnet.layer2  # [B, 512, H/8, W/8]
-        self.encoder3 = resnet.layer3  # [B, 1024, H/16, W/16]
-        self.encoder4 = resnet.layer4  # [B, 2048, H/32, W/32]
-
-        # Dekoder
-        self.upconv4 = nn.ConvTranspose2d(2048, 1024, kernel_size=2, stride=2)
-        self.decoder4 = nn.Sequential(
-            nn.Conv2d(2048, 1024, kernel_size=3, padding=1),
-            nn.BatchNorm2d(1024),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(1024, 1024, kernel_size=3, padding=1),
-            nn.BatchNorm2d(1024),
-            nn.ReLU(inplace=True)
-        )
-
-        self.upconv3 = nn.ConvTranspose2d(1024, 512, kernel_size=2, stride=2)
-        self.decoder3 = nn.Sequential(
-            nn.Conv2d(1024, 512, kernel_size=3, padding=1),
-            nn.BatchNorm2d(512),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(512, 512, kernel_size=3, padding=1),
-            nn.BatchNorm2d(512),
-            nn.ReLU(inplace=True)
-        )
-
-        self.upconv2 = nn.ConvTranspose2d(512, 256, kernel_size=2, stride=2)
-        self.decoder2 = nn.Sequential(
-            nn.Conv2d(512, 256, kernel_size=3, padding=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU(inplace=True)
-        )
-
-        self.upconv1 = nn.ConvTranspose2d(256, 64, kernel_size=2, stride=2)
-        self.decoder1 = nn.Sequential(
-            nn.Conv2d(128, 64, kernel_size=3, padding=1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(64, 64, kernel_size=3, padding=1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(inplace=True)
-        )
-
-        self.final_conv = nn.Conv2d(64, 1, kernel_size=1)
-
-        # Metryki
         self.metrics = DepthMetrics()
 
-        # Strata
         self.criterion = nn.L1Loss()
 
+
+        self.vit = timm.create_model(vit_name, pretrained=True, num_classes=0)
+
+        # Reassemble layers
+        self.reassemble1 = ReassembleLayer(embed_dim=768, out_channels=256, scale_type='x4')  # 14->56
+        self.reassemble2 = ReassembleLayer(embed_dim=768, out_channels=256, scale_type='x2')  # 14->28
+        self.reassemble3 = ReassembleLayer(embed_dim=768, out_channels=256, scale_type='x2')  # 14->28
+
+        # Fusion blocks
+        self.fusion1 = FusionBlock(in_channels=256)  # 28->56
+        self.fusion2 = FusionBlock(in_channels=256)  # 56->112
+        self.fusion3 = FusionBlock(in_channels=256)  # 112->224
+
+        #  Head
+        self.head = nn.Sequential(
+            nn.Conv2d(256, 128, kernel_size=3, padding=1),
+            nn.ReLU(True),
+            nn.ConvTranspose2d(128, 64, kernel_size=2, stride=2),
+            nn.Conv2d(64, 32, kernel_size=3, padding=1),
+            nn.ReLU(True),
+            nn.Conv2d(32, 1, kernel_size=1),
+        )
+
     def forward(self, x):
-        x = nn.functional.interpolate(x, size=self.target_size, mode='bilinear', align_corners=False)
-        # Enkoder
-        x0 = self.initial(x)  # [B, 64, H/4, W/4]
-        x1 = self.encoder1(x0)  # [B, 256, H/4, W/4]
-        x2 = self.encoder2(x1)  # [B, 512, H/8, W/8]
-        x3 = self.encoder3(x2)  # [B, 1024, H/16, W/16]
-        x4 = self.encoder4(x3)  # [B, 2048, H/32, W/32]
 
-        # Dekoder
-        d4 = self.upconv4(x4)  # [B, 1024, H/16, W/16]
-        d4 = torch.cat([d4, x3], dim=1)  # [B, 2048, H/16, W/16]
-        d4 = self.decoder4(d4)  # [B, 1024, H/16, W/16]
-
-        d3 = self.upconv3(d4)  # [B, 512, H/8, W/8]
-        d3 = torch.cat([d3, x2], dim=1)  # [B, 1024, H/8, W/8]
-        d3 = self.decoder3(d3)  # [B, 512, H/8, W/8]
-
-        d2 = self.upconv2(d3)  # [B, 256, H/4, W/4]
-        d2 = torch.cat([d2, x1], dim=1)  # [B, 512, H/4, W/4]
-        d2 = self.decoder2(d2)  # [B, 256, H/4, W/4]
-
-        d1 = self.upconv1(d2)  # [B, 64, H/2, W/2]
+        x = F.interpolate(x, size=self.target_size, mode='bilinear', align_corners=False)
 
 
-        x0_up = nn.functional.interpolate(x0, size=d1.shape[2:], mode='bilinear',
-                                          align_corners=False)  # [B, 64, H/2, W/2]
+        tokens = self.vit.forward_features(x)
+        if tokens.shape[1] == 197:
+            tokens = tokens[:, 1:, :]
 
-        d1 = torch.cat([d1, x0_up], dim=1)  # [B, 128, H/2, W/2]
-        d1 = self.decoder1(d1)  # [B, 64, H/2, W/2]
+        # Reassemble
+        feat1 = self.reassemble1(tokens)
+        feat2 = self.reassemble2(tokens)
+        feat3 = self.reassemble3(tokens)
 
-        out = nn.functional.interpolate(d1, size=self.target_size, mode='bilinear', align_corners=False)
-        out = self.final_conv(out)  # [B, 1, H, W]
 
+        feat2_up = F.interpolate(feat2, size=feat1.shape[2:], mode='bilinear', align_corners=False)
+        f1 = self.fusion1(feat1, feat2_up)
+
+        feat3_up = F.interpolate(feat3, size=f1.shape[2:], mode='bilinear', align_corners=False)
+        f2 = self.fusion2(f1, feat3_up)
+
+        zero_skip = torch.zeros_like(f2)
+        f3 = self.fusion3(f2, zero_skip)
+
+        out = self.head(f3)
+        out = F.interpolate(out, size=self.target_size, mode='bilinear', align_corners=False)
         return out
+
 
     def training_step(self, batch, batch_idx):
         images, depths = batch
@@ -196,8 +174,26 @@ class DepthEstimationUNetResNet50(pl.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        optimizer = torch.optim.AdamW(self.parameters(), lr=self.learning_rate)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=5, factor=0.5)
+        param_vit = []
+        param_decoder = []
+        for name, param in self.named_parameters():
+            if name.startswith("vit."):
+                param_vit.append(param)
+            else:
+                param_decoder.append(param)
+
+        optimizer = torch.optim.AdamW(
+            [
+                {"params": param_vit,     "lr": 1e-5},
+                {"params": param_decoder, "lr": 1e-4},
+            ],
+            weight_decay=1e-4
+        )
+
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer, mode='min', factor=0.5, patience=5
+        )
+
         return {
             "optimizer": optimizer,
             "lr_scheduler": {
@@ -205,5 +201,6 @@ class DepthEstimationUNetResNet50(pl.LightningModule):
                 "monitor": "val_loss"
             }
         }
+
 
 
