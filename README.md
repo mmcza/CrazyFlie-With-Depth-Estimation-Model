@@ -16,6 +16,7 @@ git clone https://github.com/mmcza/CrazyFlie-With-Depth-Image-Model/ ~/crazyflie
 ```Shell
 docker build . -t crazyflie_simulator
 ```
+\* (Information only if you're interested in using the package with Depth Estimation Model) for some reason a duplicate of the `cv_bridge` package is not uninstalled when the image is being built and requires to run `pip uninstall cv_bridge` after starting the container 
 
 ## Start the container
 
@@ -46,6 +47,14 @@ ros2 launch crazyflie_ros2_multiranger_bringup simple_mapper_simulation.launch.p
 In second terminal
 ```Shell
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+
+## Estimate the depth image
+Insert the model into `depth_estimation_model` and name it `depth-estimation_model.onnx` (or change path inside `/crazyflie_mapping_demo/ros2_ws/depth-estimation/depth-estimation/depth-estimation_node.py`)
+
+To run with GPU:
+```Shell
+ros2 run depth_estimation depth_estimation
 ```
 
 ## Set position of the drone

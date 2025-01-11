@@ -151,3 +151,14 @@ COPY models_links.txt /root/
 # Run the download_models.sh script
 RUN chmod +x /root/download_models.sh && \
     ./download_models.sh
+
+# Install PyTorch for depth estimation
+RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
+
+# Install the rest of the dependencies
+COPY neural_network_model/requirements.txt /root/
+RUN pip install -r requirements.txt && \
+    rm requirements.txt
+RUN pip install onnx2torch
+RUN pip uninstall cv_bridge -y
+RUN pip install cv_bridge
