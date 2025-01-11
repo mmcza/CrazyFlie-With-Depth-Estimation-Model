@@ -86,15 +86,19 @@ def visualize_predictions(
 
 
 def main():
-     #replace
-    checkpoint_path = ""
 
+    # Get parent directory of the directory of the current file
+    parent_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    # Set the path to the checkpoint
+    checkpoint_path = os.path.join(parent_dir, "checkpoints", "depth-estimation-epoch=19.ckpt")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
+    dir_with_images = os.path.join(parent_dir, "neural_network_model", "crazyflie_images", "warehouse")
+
     base_dirs = [
-        r"C:\Users\kubac\Documents\GitHub\gra\CrazyFlie-With-Depth-Image-Model\neural_network_model\crazyflie_images\warehouse"
+        dir_with_images
     ]
 
 

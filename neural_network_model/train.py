@@ -4,6 +4,7 @@ from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping, LearningRateMonitor
 from datamodule.datamodule import DepthDataModule
 from model.model import DepthEstimationDPT
+import os
 
 set
 def main():
@@ -23,15 +24,18 @@ def main():
         devices = 1
         print("Using CPU.")
 
+    # Get directory of the current file
+    parent_dir = os.path.dirname(os.path.realpath(__file__))
+    dir_with_images = os.path.join(parent_dir, "crazyflie_images", "warehouse")
 
     base_dirs = [
-        r"C:\Users\kubac\Documents\GitHub\gra\CrazyFlie-With-Depth-Image-Model\neural_network_model\crazyflie_images\warehouse"
+        dir_with_images
     ]
 
 
     data_module = DepthDataModule(
         base_dirs=base_dirs,
-        batch_size=2,
+        batch_size=4,
         target_size=(224, 224),
         num_workers=4,
         pin_memory=use_gpu
@@ -62,7 +66,7 @@ def main():
 
 
     trainer = Trainer(
-        max_epochs=20,
+        max_epochs=100,
         accelerator=accelerator,
         devices=devices,
         precision=precision,
