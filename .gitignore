@@ -64,3 +64,4 @@ neural_network_model/unet_model3.ckpt
 /lightning_logs
 /checkpoints
 /test_model
+/evaluation_outputs
