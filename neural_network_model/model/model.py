@@ -43,15 +43,16 @@ class ReassembleLayer(nn.Module):
         else:
             self.up = nn.Identity()
 
+
     def forward(self, x):
         B, N, D = x.shape
-        h = w = int(N**0.5)
+        h = w = int(N ** 0.5)
+        if h * w != N:
+            raise ValueError("Patch embeddings do not form a perfect square.")
         x = x.permute(0, 2, 1).reshape(B, D, h, w)  # [B, D, h, w]
-
         x = self.project(x)
         x = self.up(x)
         return x
-
 
 class FusionBlock(nn.Module):
     def __init__(self, in_channels):
@@ -61,6 +62,7 @@ class FusionBlock(nn.Module):
         )
 
     def forward(self, x, skip):
+        x = F.interpolate(x, size=skip.shape[2:], mode='bicubic', align_corners=False)
         x = x + skip
         x = self.upsample(x)
         return x
@@ -82,6 +84,17 @@ class DepthEstimationDPT(pl.LightningModule):
 
         self.vit = timm.create_model(vit_name, pretrained=True, num_classes=0)
 
+        new_proj = nn.Conv2d(
+            in_channels=2,  # Change from 3 (RGB) to 1 (grayscale)
+            out_channels=self.vit.patch_embed.proj.out_channels,
+            kernel_size=self.vit.patch_embed.proj.kernel_size,
+            stride=self.vit.patch_embed.proj.stride,
+            padding=self.vit.patch_embed.proj.padding,
+            bias=self.vit.patch_embed.proj.bias is not None
+        )
+
+        new_proj.weight.data = self.vit.patch_embed.proj.weight.data.mean(dim=1, keepdim=True).repeat(1, 2, 1, 1)
+        self.vit.patch_embed.proj = new_proj
         # Reassemble layers
         self.reassemble1 = ReassembleLayer(embed_dim=768, out_channels=256, scale_type='x4')  # 14->56
         self.reassemble2 = ReassembleLayer(embed_dim=768, out_channels=256, scale_type='x2')  # 14->28
@@ -100,11 +113,12 @@ class DepthEstimationDPT(pl.LightningModule):
             nn.Conv2d(64, 32, kernel_size=3, padding=1),
             nn.ReLU(True),
             nn.Conv2d(32, 1, kernel_size=1),
+            nn.Conv2d(1, 1, kernel_size=3, padding=1)  # Additional smoothing layer
         )
 
     def forward(self, x):
 
-        x = F.interpolate(x, size=self.target_size, mode='bilinear', align_corners=False)
+        x = F.interpolate(x, size=self.target_size, mode='bicubic', align_corners=False)
 
 
         tokens = self.vit.forward_features(x)
@@ -117,17 +131,17 @@ class DepthEstimationDPT(pl.LightningModule):
         feat3 = self.reassemble3(tokens)
 
 
-        feat2_up = F.interpolate(feat2, size=feat1.shape[2:], mode='bilinear', align_corners=False)
+        feat2_up = F.interpolate(feat2, size=feat1.shape[2:], mode='bicubic', align_corners=False)
         f1 = self.fusion1(feat1, feat2_up)
 
-        feat3_up = F.interpolate(feat3, size=f1.shape[2:], mode='bilinear', align_corners=False)
+        feat3_up = F.interpolate(feat3, size=f1.shape[2:], mode='bicubic', align_corners=False)
         f2 = self.fusion2(f1, feat3_up)
 
         zero_skip = torch.zeros_like(f2)
         f3 = self.fusion3(f2, zero_skip)
 
         out = self.head(f3)
-        out = F.interpolate(out, size=self.target_size, mode='bilinear', align_corners=False)
+        out = F.interpolate(out, size=self.target_size, mode='bicubic', align_corners=False)
         return out
 
 

@@ -36,17 +36,24 @@ class DepthDataset(Dataset):
 
         if not os.path.exists(camera_path):
             raise FileNotFoundError(f"Camera image not found: {camera_path}")
-        camera_img = cv2.imread(camera_path, cv2.IMREAD_COLOR)
+        camera_img = cv2.imread(camera_path, cv2.IMREAD_GRAYSCALE)
         if camera_img is None:
             raise ValueError(f"Failed to read camera image: {camera_path}")
-        camera_img = cv2.cvtColor(camera_img, cv2.COLOR_BGR2RGB)
+        #camera_img = cv2.cvtColor(camera_img, cv2.COLOR_BGR2RGB)
 
 
         if not os.path.exists(depth_path):
             raise FileNotFoundError(f"Depth image not found: {depth_path}")
-        depth_img = cv2.imread(depth_path, cv2.IMREAD_UNCHANGED)
+        depth_img = cv2.imread(depth_path, cv2.IMREAD_GRAYSCALE)
         if depth_img is None:
             raise ValueError(f"Failed to read depth image: {depth_path}")
+
+        with open(depth_path.replace("depth_camera", "distance_sensor").replace("d_", "ds_").replace(".png", ".txt"), 'r') as info_file:
+            first_value = float(info_file.readline().split(',')[0])
+            first_value = min(first_value, 255.0)  # Clip to a maximum of 255
+
+        additional_channel = torch.full_like(torch.from_numpy(camera_img), first_value, dtype=torch.float32)
+        combined_image = torch.stack((torch.from_numpy(camera_img).float(), additional_channel), dim=0)
 
         if depth_img.dtype == 'uint16':
             depth_img = depth_img.astype('float32') / 65535.0
@@ -56,7 +63,7 @@ class DepthDataset(Dataset):
             depth_img = depth_img.astype('float32')
 
 
-        augmented = self.transform(image=camera_img, mask=depth_img)
+        augmented = self.transform(image=combined_image.permute(1, 2, 0).numpy(), mask=depth_img)
         camera_tensor = augmented['image']
         depth_tensor = augmented['mask']
         depth_tensor = depth_tensor.unsqueeze(0)
