@@ -1,21 +1,49 @@
+
+import os
 import torch
 import pytorch_lightning as pl
 from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping, LearningRateMonitor
 from datamodule.datamodule import DepthDataModule
-from model.model import DepthEstimationDPT
-import os
+from model.depth_model_unetresnet import DepthEstimationUNetResNet50
+import matplotlib.pyplot as plt
+import numpy as np
 
-set
+def visualize_depth(camera_image, true_depth, pred_depth):
+    camera_image = camera_image.cpu().numpy().transpose(1, 2, 0)
+
+    mean = np.array([0.485, 0.456, 0.406])
+    std = np.array([0.229, 0.224, 0.225])
+    camera_image = std * camera_image + mean
+    camera_image = np.clip(camera_image, 0, 1)
+
+    true_depth = true_depth.cpu().numpy().squeeze()
+    pred_depth = pred_depth.cpu().numpy().squeeze()
+
+    fig, axs = plt.subplots(1, 3, figsize=(15, 5))
+    axs[0].imshow(camera_image)
+    axs[0].set_title('Obraz Kamera')
+    axs[0].axis('off')
+
+    axs[1].imshow(true_depth, cmap='plasma')
+    axs[1].set_title('Rzeczywista Głębokość')
+    axs[1].axis('off')
+
+    axs[2].imshow(pred_depth, cmap='plasma')
+    axs[2].set_title('Przewidywana Głębokość')
+    axs[2].axis('off')
+
+    plt.show()
+
 def main():
-    seed_everything(42)
 
+    seed_everything(42)
 
     use_gpu = torch.cuda.is_available()
     if use_gpu:
         gpus = torch.cuda.device_count()
         accelerator = "gpu"
-        precision = "16-mixed"
+        precision = "16-mixed"  #
         devices = gpus
         print(f"Using {gpus} GPU(s).")
     else:
@@ -24,7 +52,9 @@ def main():
         devices = 1
         print("Using CPU.")
 
-    # Get directory of the current file
+    # Clear cache
+    torch.cuda.empty_cache()
+
     parent_dir = os.path.dirname(os.path.realpath(__file__))
     dir_with_images = os.path.join(parent_dir, "crazyflie_images", "warehouse")
 
@@ -36,19 +66,26 @@ def main():
     data_module = DepthDataModule(
         base_dirs=base_dirs,
         batch_size=4,
-        target_size=(224, 224),
+        target_size=(256, 256),
         num_workers=4,
         pin_memory=use_gpu,
-        use_sensor=True
+        use_sensor=False
     )
     data_module.setup()
 
-
-    model = DepthEstimationDPT(
+    # Inicjalizacja modelu
+    model = DepthEstimationUNetResNet50(
         learning_rate=1e-4,
-        target_size=(224, 224),
-        vit_name='vit_base_patch16_224'
+        target_size=(256, 256),
+        encoder_name='resnet50',
+        encoder_weights='imagenet',
+        freeze_encoder=False
     )
+
+
+    if not os.path.exists('checkpoints'):
+        os.makedirs('checkpoints')
+
 
     checkpoint_callback = ModelCheckpoint(
         monitor='val_loss',
@@ -89,10 +126,13 @@ def main():
             camera_image, true_depth = batch
             if use_gpu:
                 camera_image = camera_image.cuda()
-            pred_depth = model(camera_image)
+                model = model.cuda()
+            preds = model(camera_image)
+
+
+            visualize_depth(camera_image[0], true_depth[0], preds[0])
+            print("Predykcja zakończona.")
             break
 
 if __name__ == "__main__":
     main()
-
-

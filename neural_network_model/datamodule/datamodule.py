@@ -2,18 +2,19 @@ import pytorch_lightning as pl
 from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 
-
-from .dataset import DepthDataset, collect_file_pairs
+from neural_network_model.datasets.dataset import DepthDataset, collect_file_pairs
+from neural_network_model.datasets.dataset_with_sensor import DepthDatasetWithSensor
 
 class DepthDataModule(pl.LightningDataModule):
     def __init__(self, base_dirs, batch_size=4, target_size=(224, 224),
-                 num_workers=2, pin_memory=False):
+                 num_workers=2, pin_memory=False, use_sensor=False):
         super().__init__()
         self.base_dirs = base_dirs
         self.batch_size = batch_size
         self.target_size = target_size
         self.num_workers = num_workers
         self.pin_memory = pin_memory
+        self.use_sensor = use_sensor
 
     def setup(self, stage=None):
         all_file_pairs = []
@@ -32,21 +33,38 @@ class DepthDataModule(pl.LightningDataModule):
             train_val_pairs, test_size=0.1111, random_state=42
         )
 
-        self.train_dataset = DepthDataset(
-            file_pairs=train_pairs,
-            target_size=self.target_size,
-            augment=True
-        )
-        self.val_dataset = DepthDataset(
-            file_pairs=val_pairs,
-            target_size=self.target_size,
-            augment=False
-        )
-        self.test_dataset = DepthDataset(
-            file_pairs=test_pairs,
-            target_size=self.target_size,
-            augment=False
-        )
+        if self.use_sensor:
+            self.train_dataset = DepthDatasetWithSensor(
+                file_pairs=train_pairs,
+                target_size=self.target_size,
+                augment=True
+            )
+            self.val_dataset = DepthDatasetWithSensor(
+                file_pairs=val_pairs,
+                target_size=self.target_size,
+                augment=False
+            )
+            self.test_dataset = DepthDatasetWithSensor(
+                file_pairs=test_pairs,
+                target_size=self.target_size,
+                augment=False
+            )
+        else:
+            self.train_dataset = DepthDataset(
+                file_pairs=train_pairs,
+                target_size=self.target_size,
+                augment=True
+            )
+            self.val_dataset = DepthDataset(
+                file_pairs=val_pairs,
+                target_size=self.target_size,
+                augment=False
+            )
+            self.test_dataset = DepthDataset(
+                file_pairs=test_pairs,
+                target_size=self.target_size,
+                augment=False
+            )
 
     def train_dataloader(self):
         return DataLoader(

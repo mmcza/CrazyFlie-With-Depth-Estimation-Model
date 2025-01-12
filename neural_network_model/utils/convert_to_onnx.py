@@ -5,6 +5,7 @@ from monai.networks.nets import resnet34
 
 #from lightningmodule import segmentationModule
 from neural_network_model.model.model import DepthEstimationDPT
+from neural_network_model.model.depth_model_unetresnet import DepthEstimationUNetResNet50
 
 def convert_checkpoint_to_onnx(checkpoint_path, onnx_output_path, input_size=(1, 3, 224, 224)):
     """
@@ -17,7 +18,12 @@ def convert_checkpoint_to_onnx(checkpoint_path, onnx_output_path, input_size=(1,
     """
     # Load the model from the checkpoint
     # model = CustomSegmentationModel.load_from_checkpoint(checkpoint_path)
-    model = DepthEstimationDPT.load_from_checkpoint(
+    # model = DepthEstimationDPT.load_from_checkpoint(
+    #     checkpoint_path,
+    #     lr=1e-4,
+    #     pretrained=True
+    # )
+    model = DepthEstimationUNetResNet50.load_from_checkpoint(
         checkpoint_path,
         lr=1e-4,
         pretrained=True
@@ -44,6 +50,6 @@ def convert_checkpoint_to_onnx(checkpoint_path, onnx_output_path, input_size=(1,
 
 
 # Example usage
-checkpoint_path = '../../test_model/depth-estimation-epoch=19.ckpt'
-onnx_output_path = '../../test_model/depth-estimation_model.onnx'
+checkpoint_path = '../../test_model/depth-estimation-epoch=26.ckpt'
+onnx_output_path = '../../test_model/depth-estimation_model_unetresnet.onnx'
 convert_checkpoint_to_onnx(checkpoint_path, onnx_output_path)
