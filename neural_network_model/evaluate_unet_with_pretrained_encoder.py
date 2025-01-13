@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytorch_lightning as pl
 from datamodule.datamodule import DepthDataModule
-from model.model import UNetWithPretrainedEncoder
+from model.unet_pretrained_encoder import UNetWithPretrainedEncoder
 
 def load_model(checkpoint_path, device):
     model = UNetWithPretrainedEncoder.load_from_checkpoint(checkpoint_path)
@@ -62,7 +62,7 @@ def main():
     pl.seed_everything(42)
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    checkpoint_path = os.path.join(current_dir, "checkpoints", "depth-estimation-epoch=55-val_loss=0.0483.ckpt")
+    checkpoint_path = os.path.join(current_dir, "checkpoints", "depth-estimation-epoch=36.ckpt")
     if not os.path.exists(checkpoint_path):
         raise FileNotFoundError(f"Checkpoint not exists: {checkpoint_path}")
 
