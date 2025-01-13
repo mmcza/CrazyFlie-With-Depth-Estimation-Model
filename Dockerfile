@@ -162,3 +162,4 @@ RUN pip install -r requirements.txt && \
 RUN pip install onnx2torch
 RUN pip uninstall cv_bridge -y
 RUN pip install cv_bridge
+RUN pip install --upgrade transforms3d

@@ -76,7 +76,7 @@ ros2 run crazyflie_data_collector data_collector --ros-args -p min_x:=-4.75 -p m
 For `world_warehouse_1.sdf`
 
 ```Shell
-ros2 run crazyflie_data_collector data_collector --ros-args -p min_x:=-6.25 -p max_x:=6.25 -p min_y:=-9.5 -p max_y:=9.5 -p min_z:=0.1 -p max_z:=8.50 -p num_of_files:=1000 -p output_path:="/root/Shared/crazyflie_images/warehouse/"
+ros2 run crazyflie_data_collector data_collector --ros-args -p min_x:=-6.25 -p max_x:=6.25 -p min_y:=-9.5 -p max_y:=9.5 -p min_z:=0.1 -p max_z:=8.50 -p num_of_files:=1000 -p output_path:="/root/Shared/neural_network_model/crazyflie_images/warehouse/"
 ```
 
 ## To run the `data_viewer.py` script, use the following command in the terminal:
