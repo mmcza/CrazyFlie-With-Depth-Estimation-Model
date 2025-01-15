@@ -32,7 +32,11 @@ class DepthEstimationNode(Node):
     def image_callback(self, msg):
         if self.predicted_depth:
             self.predicted_depth = False
+            start_time = self.get_clock().now()
             depth_msg = self.predict_depth_image(msg)
+            end_time = self.get_clock().now()
+            elapsed_time = (end_time - start_time).nanoseconds / 1e6  # Convert to milliseconds
+            self.get_logger().info(f'Prediction took {elapsed_time:.2f} ms')
             self.publisher.publish(depth_msg)
             self.predicted_depth = True
 
