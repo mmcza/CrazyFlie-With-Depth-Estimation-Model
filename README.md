@@ -1,7 +1,6 @@
-# CrazyFlie With Depth Image Model
+# CrazyFlie With Monocular Depth Estimation Model
 
-python evaluate.py --checkpoint checkpoints/depth-estimation-55-0.051.ckpt --input_dir evaluations_input --output_dir evaluations_output --target_size 256 256
-
+![Example](pictures/depth_model_example2.jpg)
 
 ## Downloading the repository
 
@@ -95,12 +94,12 @@ Install the required packages by running the following command:
 pip install -r requirements.txt
 ```
 
-Check the CUDA version of the GPU and install the appropriate version of PyTorch from the [official website](https://pytorch.org/get-started/locally/).
+Check the CUDA version of your GPU and install the appropriate version of PyTorch from the [official website](https://pytorch.org/get-started/locally/).
 
 ### Start the training
 
 To start the training, run the following command:
 
 ```Shell
-python main.py
+python neural_network/train_unet_pretrained_encoder.py
 ```
