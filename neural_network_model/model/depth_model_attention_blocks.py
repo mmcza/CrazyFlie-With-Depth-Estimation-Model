@@ -2,8 +2,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import pytorch_lightning as pl
-import torchmetrics
 from torchvision import models
+from neural_network_model.metrics import DepthMetrics
+from neural_network_model.losses import DepthLoss
 
 
 class ChannelAttention(nn.Module):
@@ -70,35 +71,13 @@ class DecoderBlockWithAttention(nn.Module):
         return self.relu(x)
 
 
-class DepthMetrics(nn.Module):
-    def __init__(self):
+class UNetWithCBAM(pl.LightningModule):
+    def __init__(self, input_channels=3, learning_rate=1e-4, attention_type='cbam', target_size=(256, 256), alpha=0.85):
         super().__init__()
-        self.rmse = torchmetrics.MeanSquaredError(squared=False)
-        self.mae = torchmetrics.MeanAbsoluteError()
-
-    def forward(self, preds, targets):
-        preds = preds.to(targets.device)
-        rmse_val = self.rmse(preds, targets)
-        mae_val = self.mae(preds, targets)
-        eps = 1e-6
-        ratio = torch.max(preds / (targets + eps), targets / (preds + eps))
-        delta1 = (ratio < 1.25).float().mean()
-        delta2 = (ratio < 1.25 ** 2).float().mean()
-        delta3 = (ratio < 1.25 ** 3).float().mean()
-        return {
-            "rmse": rmse_val,
-            "mae": mae_val,
-            "delta1": delta1,
-            "delta2": delta2,
-            "delta3": delta3
-        }
-
-
-class UNetWithPretrainedEncoder(pl.LightningModule):
-    def __init__(self, input_channels=3, learning_rate=1e-4, attention_type='cbam', target_size=(256, 256)):
-        super().__init__()
+        self.save_hyperparameters()
         self.learning_rate = learning_rate
         self.target_size = target_size
+        self.alpha = alpha
 
         resnet = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1)
         self.initial = nn.Sequential(
@@ -127,7 +106,7 @@ class UNetWithPretrainedEncoder(pl.LightningModule):
         self.final_conv = nn.Conv2d(64, 1, kernel_size=1)
 
         self.metrics = DepthMetrics()
-        self.criterion = nn.L1Loss()
+        self.loss_fn = DepthLoss(alpha=self.alpha)
 
     def forward(self, x):
         x = F.interpolate(x, size=self.target_size, mode="bilinear", align_corners=False)
@@ -156,26 +135,29 @@ class UNetWithPretrainedEncoder(pl.LightningModule):
 
         out = F.interpolate(d1, size=self.target_size, mode="bilinear", align_corners=False)
         out = self.final_conv(out)
+        out = torch.sigmoid(out)
         return out
 
     def training_step(self, batch, batch_idx):
         images, depths = batch
         preds = self.forward(images)
-        loss = self.criterion(preds, depths)
+        loss = self.loss_fn(preds, depths)
         metrics = self.metrics(preds, depths)
+
         self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True)
-        self.log("train_rmse", metrics["rmse"], on_step=True, on_epoch=True, prog_bar=True)
-        self.log("train_mae", metrics["mae"], on_step=True, on_epoch=True, prog_bar=True)
-        self.log("train_delta1", metrics["delta1"], on_step=True, on_epoch=True, prog_bar=True)
-        self.log("train_delta2", metrics["delta2"], on_step=True, on_epoch=True, prog_bar=True)
-        self.log("train_delta3", metrics["delta3"], on_step=True, on_epoch=True, prog_bar=True)
+        self.log("train_rmse", metrics["rmse"], on_epoch=True, prog_bar=True)
+        self.log("train_mae", metrics["mae"], on_epoch=True, prog_bar=True)
+        self.log("train_delta1", metrics["delta1"], on_epoch=True, prog_bar=True)
+        self.log("train_delta2", metrics["delta2"], on_epoch=True, prog_bar=True)
+        self.log("train_delta3", metrics["delta3"], on_epoch=True, prog_bar=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
         images, depths = batch
         preds = self.forward(images)
-        loss = self.criterion(preds, depths)
+        loss = self.loss_fn(preds, depths)
         metrics = self.metrics(preds, depths)
+
         self.log("val_loss", loss, on_step=False, on_epoch=True, prog_bar=True)
         self.log("val_rmse", metrics["rmse"], on_step=False, on_epoch=True, prog_bar=True)
         self.log("val_mae", metrics["mae"], on_step=False, on_epoch=True, prog_bar=True)
@@ -187,8 +169,9 @@ class UNetWithPretrainedEncoder(pl.LightningModule):
     def test_step(self, batch, batch_idx):
         images, depths = batch
         preds = self.forward(images)
-        loss = self.criterion(preds, depths)
+        loss = self.loss_fn(preds, depths)
         metrics = self.metrics(preds, depths)
+
         self.log("test_loss", loss, on_step=False, on_epoch=True, prog_bar=True)
         self.log("test_rmse", metrics["rmse"], on_step=False, on_epoch=True, prog_bar=True)
         self.log("test_mae", metrics["mae"], on_step=False, on_epoch=True, prog_bar=True)
@@ -209,3 +192,4 @@ class UNetWithPretrainedEncoder(pl.LightningModule):
                 "monitor": "val_loss"
             }
         }
+
