@@ -65,3 +65,4 @@ neural_network_model/unet_model3.ckpt
 /checkpoints
 /test_model
 /evaluation_outputs
+/neural_network_model/neural_network_model.egg-info
