@@ -123,25 +123,26 @@ $$
 2. **SSIM Loss**:  
    The Structural Similarity Index (SSIM) Loss evaluates the perceptual similarity between the predicted and ground truth depth maps. The SSIM Loss is defined as:
 
-   \[
-   \mathcal{L}_{\text{SSIM}} = 1 - \text{SSIM}(\hat{D}, D)
-   \]
+$$
+\mathcal{L}_{\text{SSIM}} = 1 - \text{SSIM}(\hat{D}, D)
+$$
 
-   Here, \(\text{SSIM}(\hat{D}, D)\) computes the structural similarity index over the depth maps.
+Here, \( \text{SSIM}(\hat{D}, D) \) computes the structural similarity index over the depth maps.
 
-3. **Smoothness Loss**:  
-   To encourage spatial consistency and reduce noise in the predicted depth maps, a smoothness loss penalizes large gradients in the depth predictions. The smoothness loss is defined as:
+3. **Smoothness Loss**:
 
-   \[
-   \mathcal{L}_{\text{Smooth}} = \frac{1}{N} \sum_{i,j} \left| \frac{\partial \hat{D}}{\partial x} \right| + \left| \frac{\partial \hat{D}}{\partial y} \right|
-   \]
+To encourage spatial consistency and reduce noise in the predicted depth maps, a smoothness loss penalizes large gradients in the depth predictions. The smoothness loss is defined as:
 
-   where \(N\) is the total number of pixels, and \(\frac{\partial \hat{D}}{\partial x}\) and \(\frac{\partial \hat{D}}{\partial y}\) are the gradients of the predicted depth map along the \(x\) and \(y\) axes, respectively.
+$$
+\mathcal{L}_{\text{Smooth}} = \frac{1}{N} \sum_{i,j} \left| \frac{\partial \hat{D}}{\partial x} \right| + \left| \frac{\partial \hat{D}}{\partial y} \right|
+$$
 
-### Combined Loss Function
+where \( N \) is the total number of pixels, and \( \frac{\partial \hat{D}}{\partial x} \) and \( \frac{\partial \hat{D}}{\partial y} \) are the gradients of the predicted depth map along the \( x \) and \( y \) axes, respectively.
 
-The final loss function combines these components using a weighted sum. A hyperparameter \(\alpha\) determines the balance between L1 Loss and SSIM Loss, while the Smoothness Loss is added as a regularization term:
+## Combined Loss Function
 
-\[
+The final loss function combines these components using a weighted sum. A hyperparameter \( \alpha \) determines the balance between L1 Loss and SSIM Loss, while the Smoothness Loss is added as a regularization term:
+
+$$
 \mathcal{L} = (1 - \alpha) \cdot \mathcal{L}_{\text{L1}} + \alpha \cdot \mathcal{L}_{\text{SSIM}} + \mathcal{L}_{\text{Smooth}}
-\]
+$$
