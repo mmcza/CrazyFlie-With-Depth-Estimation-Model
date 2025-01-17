@@ -116,9 +116,9 @@ The **Depth Loss** combines three key components:
 1. **L1 Loss**:  
    The L1 Loss measures the mean absolute error (MAE) between the predicted depth map (\(\hat{D}\)) and the ground truth depth map (\(D\)). 
 
-   \[
-   \mathcal{L}_{\text{L1}} = \text{mean}(|\hat{D} - D|)
-   \]
+$$
+\mathcal{L}_{\text{L1}} = \text{mean}(|\hat{D} - D|)
+$$
 
 2. **SSIM Loss**:  
    The Structural Similarity Index (SSIM) Loss evaluates the perceptual similarity between the predicted and ground truth depth maps. The SSIM Loss is defined as:
