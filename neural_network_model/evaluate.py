@@ -8,6 +8,7 @@ from pathlib import Path
 
 from neural_network_model.model.depth_model_unet import DepthEstimationUNetResNet34
 from neural_network_model.model.depth_model_attention_blocks import UNetWithCBAM
+from neural_network_model.model.depth_model_transformer import DepthEstimationDPT
 from neural_network_model.datamodule.datamodule import DepthDataModule
 
 
@@ -16,7 +17,7 @@ def parse_args():
     parser.add_argument(
         '--model',
         type=str,
-        choices=['unet_resnet34', 'unet_cbam'],
+        choices=['unet_resnet34', 'unet_cbam', 'dpt'],
         required=True
     )
     parser.add_argument(
@@ -117,7 +118,7 @@ def main():
     data_module = DepthDataModule(
         base_dirs=base_dirs,
         batch_size=2,
-        target_size=(256, 256),
+        target_size=(224, 224),
         num_workers=4,
         pin_memory=use_gpu
     )
@@ -131,6 +132,10 @@ def main():
         model_class = UNetWithCBAM
         default_checkpoint = os.path.join(current_dir, "checkpoints",
                                           f"depth-estimation-unet_cbam-epoch={args.epoch}.ckpt")
+    elif args.model == 'dpt':
+        model_class = DepthEstimationDPT
+        default_checkpoint = os.path.join(current_dir, "checkpoints",
+                                          f"depth-estimation-dpt-epoch={args.epoch}.ckpt")
     else:
         raise ValueError(f"Unsupported model type: {args.model}")
 
@@ -150,3 +155,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
