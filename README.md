@@ -98,8 +98,51 @@ Check the CUDA version of your GPU and install the appropriate version of PyTorc
 
 ### Start the training
 
-To start the training, run the following command:
+To start the training, run the following commands:
 
 ```Shell
-python neural_network/train_unet_pretrained_encoder.py
+  python train.py --model unet_resnet34
+  python train.py --model unet_cbam
+
 ```
+## Depth Loss Function
+
+In this project, the loss function for depth estimation is designed to combine multiple components that balance pixel-wise accuracy, perceptual similarity, and spatial smoothness. 
+
+### Components of the Loss Function
+
+The **Depth Loss** combines three key components:
+
+1. **L1 Loss**:  
+   The L1 Loss measures the mean absolute error (MAE) between the predicted depth map (\(\hat{D}\)) and the ground truth depth map (\(D\)). 
+
+$$
+\mathcal{L}_{\text{L1}} = \text{mean}(|\hat{D} - D|)
+$$
+
+2. **SSIM Loss**:  
+   The Structural Similarity Index (SSIM) Loss evaluates the perceptual similarity between the predicted and ground truth depth maps. The SSIM Loss is defined as:
+
+$$
+\mathcal{L}_{\text{SSIM}} = 1 - \text{SSIM}(\hat{D}, D)
+$$
+
+Here, \( \text{SSIM}(\hat{D}, D) \) computes the structural similarity index over the depth maps.
+
+3. **Smoothness Loss**:
+
+To encourage spatial consistency and reduce noise in the predicted depth maps, a smoothness loss penalizes large gradients in the depth predictions. The smoothness loss is defined as:
+
+$$
+\mathcal{L}_{\text{Smooth}} = \frac{1}{N} \sum_{i,j} \left| \frac{\partial \hat{D}}{\partial x} \right| + \left| \frac{\partial \hat{D}}{\partial y} \right|
+$$
+
+where \( N \) is the total number of pixels, and \( \frac{\partial \hat{D}}{\partial x} \) and \( \frac{\partial \hat{D}}{\partial y} \) are the gradients of the predicted depth map along the \( x \) and \( y \) axes, respectively.
+
+## Combined Loss Function
+
+The final loss function combines these components using a weighted sum. A hyperparameter \( \alpha \) determines the balance between L1 Loss and SSIM Loss, while the Smoothness Loss is added as a regularization term:
+
+$$
+\mathcal{L} = (1 - \alpha) \cdot \mathcal{L}_{\text{L1}} + \alpha \cdot \mathcal{L}_{\text{SSIM}} + \mathcal{L}_{\text{Smooth}}
+$$
