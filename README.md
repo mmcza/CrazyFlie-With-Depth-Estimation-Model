@@ -131,18 +131,8 @@ Here, \( \text{SSIM}(\hat{D}, D) \) computes the structural similarity index ove
 
 3. **Smoothness Loss**:
 
-To encourage spatial consistency and reduce noise in the predicted depth maps, a smoothness loss penalizes large gradients in the depth predictions. The smoothness loss is defined as:
-
-$$
-\mathcal{L}_{\text{Smooth}} = \frac{1}{N} \sum_{i,j} \left| \frac{\partial \hat{D}}{\partial x} \right| + \left| \frac{\partial \hat{D}}{\partial y} \right|
-$$
-
-where \( N \) is the total number of pixels, and \( \frac{\partial \hat{D}}{\partial x} \) and \( \frac{\partial \hat{D}}{\partial y} \) are the gradients of the predicted depth map along the \( x \) and \( y \) axes, respectively.
+To encourage spatial consistency and reduce noise in the predicted depth maps, a smoothness loss penalizes large gradients in the depth predictions. 
 
 ## Combined Loss Function
 
-The final loss function combines these components using a weighted sum. A hyperparameter \( \alpha \) determines the balance between L1 Loss and SSIM Loss, while the Smoothness Loss is added as a regularization term:
-
-$$
-\mathcal{L} = (1 - \alpha) \cdot \mathcal{L}_{\text{L1}} + \alpha \cdot \mathcal{L}_{\text{SSIM}} + \mathcal{L}_{\text{Smooth}}
-$$
+The final loss function combines these components using a weighted sum.
