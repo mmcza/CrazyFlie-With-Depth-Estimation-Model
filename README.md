@@ -105,9 +105,6 @@ To start the training, run the following commands:
   python train.py --model unet_cbam
 
 ```
-## Depth Loss Function
-
-In this project, the loss function for depth estimation is designed to combine multiple components that balance pixel-wise accuracy, perceptual similarity, and spatial smoothness. 
 
 ### Components of the Loss Function
 
@@ -131,7 +128,6 @@ Here, \( \text{SSIM}(\hat{D}, D) \) computes the structural similarity index ove
 
 3. **Smoothness Loss**:
 
-To encourage spatial consistency and reduce noise in the predicted depth maps, a smoothness loss penalizes large gradients in the depth predictions. 
 
 ## Combined Loss Function
 
